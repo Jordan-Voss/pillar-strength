@@ -45,7 +45,18 @@ Example:
 - `GET /sessions/{id}` must verify the session belongs to the user before returning it.
 
 ---
+## Authentication bootstrap
 
+The API exposes a minimal `/v1/me` endpoint.
+
+This endpoint:
+- validates the client’s authentication token
+- returns the authenticated `user_id`
+- provides user-specific defaults (units, e1RM formula)
+
+All other endpoints assume authentication has already been established.
+
+---
 ## Input validation
 
 The API validates:

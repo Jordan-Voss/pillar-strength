@@ -1,0 +1,61 @@
+name: Deploy API to Pi
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "apps/api/**"
+      - "infra/ansible/**"
+      - ".github/workflows/api-deploy.yml"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build API
+        working-directory: apps/api/pillar-strength
+        env:
+          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+        run: |
+          mvn -q -DskipTests=false -Djasypt.encryptor.password=$JASYPT_ENCRYPTOR_PASSWORD clean test package
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Setup SSH key
+        env:
+          PI_HOST: ${{ secrets.PI_HOST }}
+          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/pillarstrength_deploy
+          chmod 600 ~/.ssh/pillarstrength_deploy
+          ssh-keyscan -p $PI_SSH_PORT -H $PI_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy with Ansible
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SUPABASE_ISSUER_URI: ${{ secrets.SUPABASE_ISSUER_URI }}
+          SUPABASE_JWKS_URI: ${{ secrets.SUPABASE_JWKS_URI }}
+          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+
+          PI_HOST: ${{ secrets.PI_HOST }}
+          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
+          PI_SSH_USER: ${{ secrets.PI_SSH_USER }}
+        run: |
+          ansible-playbook -i infra/ansible/inventories/hosts.ini infra/ansible/playbooks/deploy.yml \
+            -e "pi_host=$PI_HOST pi_ssh_port=$PI_SSH_PORT pi_ssh_user=$PI_SSH_USER" \
+            -vv

@@ -153,3 +153,33 @@ Returns past sessions (paginated).
 - volume per exercise
 
 - top e1RM for S/B/D if present
+
+---
+
+# User 
+### GET /v1/me
+
+#### Returns basic information about the authenticated user.
+
+Used by the client to:
+- verify authentication
+- bootstrap user preferences (units, e1RM formula)
+- confirm API connectivity
+
+**Authentication:** Required (JWT)
+
+**Response (200):**
+```json
+{
+  "userId": "uuid",
+  "units": "METRIC",
+  "e1rmFormula": "EPLEY"
+}
+```
+
+**Errors:**
+
+```json
+{
+401 Unauthorized - missing or invalid token
+}```

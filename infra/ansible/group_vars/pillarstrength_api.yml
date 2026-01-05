@@ -1,0 +1,14 @@
+app_name: pillar-strength-api
+app_user: pillarstrength
+app_group: pillarstrength
+
+app_dir: /opt/pillar-strength
+jar_name: pillar-strength-api.jar
+
+server_port: 8335
+
+# Domain you will point at your home public IP
+public_domain: pillarstrength.api.jordanvoss.dev
+
+# If you use Spring profiles
+spring_profile: prod

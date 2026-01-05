@@ -1,0 +1,26 @@
+[Unit]
+Description=Pillar Strength API
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ app_dir }}
+
+Environment=SPRING_PROFILES_ACTIVE={{ spring_profile }}
+EnvironmentFile={{ app_dir }}/.env
+
+ExecStart=/usr/bin/java -jar {{ app_dir }}/{{ jar_name }}
+
+Restart=always
+RestartSec=3
+
+# Optional hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths={{ app_dir }}
+
+[Install]
+WantedBy=multi-user.target
