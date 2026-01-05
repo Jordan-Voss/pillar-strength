@@ -29,8 +29,7 @@ public class MeController {
             @ApiResponse(responseCode="404", description="Profile not found")
     })
     @GetMapping("/me")
-    public MeResponse me(Authentication authentication) {
-        Jwt jwt = (Jwt) authentication.getPrincipal();
+    public MeResponse me(@AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         return meService.getMe(userId);
     }

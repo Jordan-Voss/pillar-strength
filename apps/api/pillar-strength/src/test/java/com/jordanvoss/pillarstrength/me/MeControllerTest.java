@@ -35,16 +35,18 @@ class MeControllerTest {
 
     @Test
     void me_returns200_whenJwtPresent() throws Exception {
+        var id = UUID.randomUUID();
+
         var profile = new UserProfileEntity(
-                UUID.fromString("user-123"), "Jordan", "Voss", Units.METRIC, E1rmFormula.EPLEY, Theme.SYSTEM
+                id, "Jordan", "Voss", Units.METRIC, E1rmFormula.EPLEY, Theme.SYSTEM
         );
 
-        when(repo.findById(UUID.fromString("user-123"))).thenReturn(Optional.of(profile));
+        when(repo.findByUserId(id)).thenReturn(Optional.of(profile));
 
         mvc.perform(get("/v1/me")
-                        .with(jwt().jwt(j -> j.subject("user-123"))))
+                        .with(jwt().jwt(j -> j.subject(id.toString()))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("user-123"))
+                .andExpect(jsonPath("$.userId").value(id.toString()))
                 .andExpect(jsonPath("$.units").value("METRIC"))
                 .andExpect(jsonPath("$.e1rmFormula").value("EPLEY"));
     }
