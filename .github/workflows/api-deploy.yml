@@ -38,24 +38,29 @@ jobs:
           PI_HOST: ${{ secrets.PI_HOST }}
           PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
         run: |
+          set -euo pipefail
+
           mkdir -p ~/.ssh
-          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/pillarstrength_deploy
+          chmod 700 ~/.ssh
+
+          # Write key (multiline safe)
+          printf '%s\n' "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/pillarstrength_deploy
           chmod 600 ~/.ssh/pillarstrength_deploy
-          ssh-keyscan -p $PI_SSH_PORT -H $PI_HOST >> ~/.ssh/known_hosts
+
+          # Add host key to known_hosts (default port 22)
+          PORT="${PI_SSH_PORT:-22}"
+          if ! ssh-keyscan -p "$PORT" -H "$PI_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
+            echo "ssh-keyscan failed. Check PI_HOST DNS/public IP, port forwarding, and that SSH is reachable."
+            echo "Tried host=$PI_HOST port=$PORT"
+            exit 1
+          fi
 
       - name: Deploy with Ansible
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          SUPABASE_ISSUER_URI: ${{ secrets.SUPABASE_ISSUER_URI }}
-          SUPABASE_JWKS_URI: ${{ secrets.SUPABASE_JWKS_URI }}
-          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
-
-          PI_HOST: ${{ secrets.PI_HOST }}
-          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
-          PI_SSH_USER: ${{ secrets.PI_SSH_USER }}
+          ANSIBLE_HOST_KEY_CHECKING: "True"
         run: |
-          ansible-playbook -i infra/ansible/inventories/hosts.ini infra/ansible/playbooks/deploy.yml \
-            -e "pi_host=$PI_HOST pi_ssh_port=$PI_SSH_PORT pi_ssh_user=$PI_SSH_USER" \
+          ansible-playbook \
+            -i infra/ansible/inventories/hosts.ini \
+            infra/ansible/playbooks/deploy.yml \
+            --private-key ~/.ssh/pillarstrength_deploy \
             -vv
