@@ -60,7 +60,7 @@ jobs:
           ANSIBLE_HOST_KEY_CHECKING: "True"
         run: |
           ansible-playbook \
-            -i infra/ansible/inventories/hosts.ini \
+            -i infra/ansible/inventory/hosts.ini \
             infra/ansible/playbooks/deploy.yml \
             --private-key ~/.ssh/pillarstrength_deploy \
             -vv
