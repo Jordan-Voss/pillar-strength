@@ -1,4 +1,5 @@
 name: Deploy API to Pi
+# if: github.repository_owner == 'Jordan-Voss' && github.ref == 'refs/heads/main'
 
 on:
   push:
@@ -10,8 +11,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: [self-hosted, Linux, ARM]
     steps:
       - uses: actions/checkout@v4
 
@@ -32,28 +32,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
-
-      - name: Setup SSH key
-        env:
-          PI_HOST: ${{ secrets.PI_HOST }}
-          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
-        run: |
-          set -euo pipefail
-
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-          # Write key (multiline safe)
-          printf '%s\n' "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/pillarstrength_deploy
-          chmod 600 ~/.ssh/pillarstrength_deploy
-
-          # Add host key to known_hosts (default port 22)
-          PORT="${PI_SSH_PORT:-22}"
-          if ! ssh-keyscan -p "$PORT" -H "$PI_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
-            echo "ssh-keyscan failed. Check PI_HOST DNS/public IP, port forwarding, and that SSH is reachable."
-            echo "Tried host=$PI_HOST port=$PORT"
-            exit 1
-          fi
 
       - name: Deploy with Ansible
         env:

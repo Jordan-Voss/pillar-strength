@@ -1,6 +1,9 @@
 - name: Deploy Pillar Strength API
-  hosts: pillar_api
+  hosts: pillarstrength_pi
+  connection: local
   become: true
+  gather_facts: true
+
 
   tasks:
     - name: Ensure app directory exists
@@ -57,3 +60,8 @@
       uri:
         url: "http://127.0.0.1:{{ server_port }}/actuator/health"
         status_code: 200
+      register: health
+      retries: 10
+      delay: 2
+      until: health.status == 200
+
