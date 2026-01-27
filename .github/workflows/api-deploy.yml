@@ -1,44 +1,49 @@
-name: Deploy API to Pi
-# if: github.repository_owner == 'Jordan-Voss' && github.ref == 'refs/heads/main'
-
+name: Deploy API to AWS
 on:
   push:
     branches: [ main ]
-    paths:
-      - "apps/api/**"
-      - "infra/ansible/**"
-      - ".github/workflows/api-deploy.yml"
+    paths: ["apps/api/**", "infra/terraform/**"]
 
 jobs:
-  build-and-deploy:
-    runs-on: [self-hosted, Linux, ARM]
+  provision-and-deploy:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          distribution: temurin
-          java-version: "21"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
 
-      - name: Build API
-        working-directory: apps/api/pillar-strength
-        env:
-          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
+      - name: Terraform Apply
+        working-directory: infra/terraform
         run: |
-          mvn -q -DskipTests=false -Djasypt.encryptor.password=$JASYPT_ENCRYPTOR_PASSWORD clean test package
+          terraform init
+          terraform apply -auto-approve
+          echo "INSTANCE_IP=$(terraform output -raw api_public_ip)" >> $GITHUB_ENV
 
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Deploy with Ansible
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: "True"
+      - name: Build & Push
         run: |
-          ansible-playbook \
-            -i infra/ansible/inventory/hosts.ini \
-            infra/ansible/playbooks/deploy.yml \
-            --private-key ~/.ssh/pillarstrength_deploy \
-            -vv
+          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest ./apps/api/pillar-strength
+          docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
+
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.INSTANCE_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            docker stop api || true && docker rm api || true
+            docker run -d --name api -p 8335:8335 \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+              -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
+              ${{ secrets.ECR_REPOSITORY_URI }}:latest
