@@ -2,7 +2,7 @@ name: Deploy API to AWS
 on:
   push:
     branches: [ main ]
-    paths: ["apps/api/**", "infra/terraform/**"]
+    paths: ["apps/api/**", "infra/terraform/**", ".github/workflows/api-deploy.yml"]
 
 jobs:
   provision-and-deploy:
