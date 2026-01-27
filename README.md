@@ -36,12 +36,16 @@ The MVP focuses on **gym-based training only**, but the system is designed to ex
 - Expo Router
 - Runs on iOS, Android, and Web
 
-**Engineering**
+**Engineering & DevOps**
 - Monorepo with vertical slices
 - CI with linting and tests
 - OpenAPI for API contracts
 - ADRs for architectural decisions
 - Structured logging and basic observability
+- Infrastructure as Code: Terraform (AWS) for automated resource provisioning.
+- Containerisation: Docker for full environment parity across local and cloud environments.
+- Image Registry: Private Amazon ECR for secure, high-speed image deployments.
+- Architecture Migration: Transitioned from a legacy Raspberry Pi/Ansible approach to a modern Cloud-Native stack to resolve hardware compatibility and security constraints.
 
 ---
 
