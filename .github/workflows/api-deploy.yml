@@ -36,25 +36,28 @@ jobs:
           docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest ./apps/api/pillar-strength
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
-      - name: SSH Deploy
+      - name: SSH and Run Container
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-                      # Wait up to 60 seconds for docker to be installed by user_data
-                      for i in {1..12}; do docker --version && break || sleep 5; done
+            # 1. Wait for Docker and AWS CLI (up to 3 mins)
+            echo "Waiting for background installation to finish..."
+            until command -v docker >/dev/null 2>&1 && command -v aws >/dev/null 2>&1; do
+              echo "Still installing tools... sleeping 10s"
+              sleep 10
+            done
 
-                      # Authenticate with ECR
-                      aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
-                      
-                      # Pull and Restart
-                      docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
-                      docker stop api || true
-                      docker rm api || true
-                      docker run -d --name api -p 8335:8335 \
-                        -e DB_URL="${{ secrets.DB_URL }}" \
-                        -e DB_PASS="${{ secrets.DB_PASS }}" \
-                        -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
-                        ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            # 2. Login to ECR
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+            
+            # 3. Deployment
+            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            docker stop api || true
+            docker rm api || true
+            docker run -d --name api -p 8335:8335 \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_PASS="${{ secrets.DB_PASS }}" \
+              ${{ secrets.ECR_REPOSITORY_URI }}:latest
