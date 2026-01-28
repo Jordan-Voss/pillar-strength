@@ -44,21 +44,20 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            count=0
             until command -v docker >/dev/null 2>&1 && command -v aws >/dev/null 2>&1; do
-              if [ $count -ge 30 ]; then
-                exit 1
-              fi
-              sleep 10
-              count=$((count+1))
+              sleep 5
             done
+
+            sudo chmod 666 /var/run/docker.sock
 
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
-            sudo docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
-            sudo docker stop api || true
-            sudo docker rm api || true
-            sudo docker run -d --name api -p 8335:8335 \
+            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            
+            docker stop api || true
+            docker rm api || true
+            
+            docker run -d --name api -p 8335:8335 \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_PASS="${{ secrets.DB_PASS }}" \
               -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
