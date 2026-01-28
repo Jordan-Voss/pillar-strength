@@ -66,7 +66,7 @@ resource "aws_instance" "api_server" {
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   vpc_security_group_ids = [aws_security_group.api_sg.id]
 
-  user_data = <<-EOF
+  user_data = <<EOF
 #!/bin/bash
 apt-get update
 apt-get install -y docker.io unzip curl
