@@ -80,7 +80,7 @@ usermod -aG docker ubuntu
 EOF
 
   tags = {
-    Name    = "Pillar-API-Instance"
+    Name    = "Pillar-API-Instance-v2"
     Project = "PillarStrength"
   }
 }
