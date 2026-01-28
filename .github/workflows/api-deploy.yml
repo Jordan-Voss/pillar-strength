@@ -55,10 +55,10 @@ jobs:
 
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
-            docker stop api || true
-            docker rm api || true
-            docker run -d --name api -p 8335:8335 \
+            sudo docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            sudo docker stop api || true
+            sudo docker rm api || true
+            sudo docker run -d --name api -p 8335:8335 \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_PASS="${{ secrets.DB_PASS }}" \
               -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
