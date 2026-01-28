@@ -68,13 +68,28 @@ resource "aws_instance" "api_server" {
   vpc_security_group_ids = [aws_security_group.api_sg.id]
 
 
-  user_data = <<-EOF
+user_data = <<-EOF
               #!/bin/bash
+              # Update and install dependencies
               apt-get update
-              apt-get install -y docker.io awscli
+              apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+              
+              # Install Docker
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+              add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+              apt-get update
+              apt-get install -y docker-ce
+              
+              # Install AWS CLI
+              apt-get install -y awscli
+              
+              # Start Docker and set permissions
               systemctl start docker
               systemctl enable docker
               usermod -aG docker ubuntu
+              
+              # Force a group refresh for the current shell session
+              newgrp docker
               EOF
 
   tags = {

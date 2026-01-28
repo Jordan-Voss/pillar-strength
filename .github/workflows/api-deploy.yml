@@ -43,12 +43,18 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
-            docker stop api || true && docker rm api || true
-            docker run -d --name api -p 8335:8335 \
-              -e DB_URL="${{ secrets.DB_URL }}" \
-              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-              -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
-              -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
-              ${{ secrets.ECR_REPOSITORY_URI }}:latest
+                      # Wait up to 60 seconds for docker to be installed by user_data
+                      for i in {1..12}; do docker --version && break || sleep 5; done
+
+                      # Authenticate with ECR
+                      aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+                      
+                      # Pull and Restart
+                      docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
+                      docker stop api || true
+                      docker rm api || true
+                      docker run -d --name api -p 8335:8335 \
+                        -e DB_URL="${{ secrets.DB_URL }}" \
+                        -e DB_PASS="${{ secrets.DB_PASS }}" \
+                        -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+                        ${{ secrets.ECR_REPOSITORY_URI }}:latest
