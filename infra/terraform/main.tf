@@ -19,7 +19,7 @@ resource "aws_security_group" "api_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] 
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -39,7 +39,6 @@ resource "aws_security_group" "api_sg" {
 
 resource "aws_iam_role" "ec2_ecr_role" {
   name = "pillar-ec2-ecr-role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -61,35 +60,31 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 }
 
 resource "aws_instance" "api_server" {
-  ami                  = data.aws_ami.ubuntu.id
-  instance_type        = "t3.micro"
-  key_name             = "pillar-key"
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.micro"
+  key_name               = "pillar-key"
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   vpc_security_group_ids = [aws_security_group.api_sg.id]
 
-
-user_data = <<-EOF
-              #!/bin/bash
-              # 1. Update and install dependencies
-              apt-get update
-              apt-get install -y docker.io unzip curl
-              
-              # 2. Install AWS CLI v2 (The Official Way)
-              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-              unzip awscliv2.zip
-              ./aws/install
-              
-              # 3. Cleanup
-              rm -rf awscliv2.zip ./aws
-              
-              # 4. Start Docker and set permissions
-              systemctl start docker
-              systemctl enable docker
-              usermod -aG docker ubuntu
-              EOF
+  user_data = <<-EOF
+#!/bin/bash
+apt-get update
+apt-get install -y docker.io unzip curl
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+rm -rf awscliv2.zip ./aws
+systemctl start docker
+systemctl enable docker
+usermod -aG docker ubuntu
+EOF
 
   tags = {
     Name    = "Pillar-API-Instance"
     Project = "PillarStrength"
   }
+}
+
+output "api_public_ip" {
+  value = aws_instance.api_server.public_ip
 }

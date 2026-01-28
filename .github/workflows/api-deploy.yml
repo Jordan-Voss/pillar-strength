@@ -3,20 +3,21 @@ on:
   push:
     branches: [ main ]
     paths: ["apps/api/**", "infra/terraform/**", ".github/workflows/api-deploy.yml"]
+  workflow_dispatch:
 
 jobs:
   provision-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.10.0"
 
@@ -43,21 +44,23 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            # 1. Wait for Docker and AWS CLI (up to 3 mins)
-            echo "Waiting for background installation to finish..."
+            count=0
             until command -v docker >/dev/null 2>&1 && command -v aws >/dev/null 2>&1; do
-              echo "Still installing tools... sleeping 10s"
+              if [ $count -ge 30 ]; then
+                exit 1
+              fi
               sleep 10
+              count=$((count+1))
             done
 
-            # 2. Login to ECR
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
-            # 3. Deployment
             docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
             docker stop api || true
             docker rm api || true
             docker run -d --name api -p 8335:8335 \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_PASS="${{ secrets.DB_PASS }}" \
+              -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+              -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
               ${{ secrets.ECR_REPOSITORY_URI }}:latest
