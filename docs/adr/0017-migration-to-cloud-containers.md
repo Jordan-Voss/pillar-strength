@@ -1,8 +1,5 @@
 # ADR 0017: Migration to Containerized Cloud Infrastructure
 
-## Status
-Accepted
-
 ## Context
 Initial development intended to use a local Raspberry Pi as the production host, managed via Ansible. However, the migration to AWS was triggered by several critical blockers:
 - **Hardware/OS Constraints**: The legacy OS and older ARM architecture of the Pi made it difficult to stabilize the GitHub Actions self-hosted runner.

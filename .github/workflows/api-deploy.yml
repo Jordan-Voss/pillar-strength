@@ -1,65 +1,103 @@
-name: Deploy API to AWS
+name: Production CI/CD
 on:
   push:
     branches: [ main ]
-    paths: ["apps/api/**", "infra/terraform/**", ".github/workflows/api-deploy.yml"]
-  workflow_dispatch:
 
 jobs:
-  provision-and-deploy:
+  test-and-package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build and Test
+        working-directory: ./apps/api/pillar-strength
+        run: mvn clean install
 
+  provision:
+    needs: test-and-package
+    runs-on: ubuntu-latest
+    outputs:
+      instance_ip: ${{ steps.set-ip.outputs.INSTANCE_IP }}
+    steps:
+      - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      
       - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.10.0"
-
       - name: Terraform Apply
         working-directory: infra/terraform
         run: |
           terraform init
           terraform apply -auto-approve
-          echo "INSTANCE_IP=$(terraform output -raw api_public_ip)" >> $GITHUB_ENV
-          
-      - name: Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+          echo "INSTANCE_IP=$(terraform output -raw api_public_ip)" >> $GITHUB_OUTPUT
+        id: set-ip
 
-      - name: Build & Push
+  deploy:
+    needs: [test-and-package, provision]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build & Push Image
         run: |
           docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest ./apps/api/pillar-strength
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
-
-      - name: SSH and Run Container
+      - name: SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.INSTANCE_IP }}
+          host: ${{ needs.provision.outputs.instance_ip }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            until command -v docker >/dev/null 2>&1 && command -v aws >/dev/null 2>&1; do
-              sleep 5
-            done
-
             sudo chmod 666 /var/run/docker.sock
-
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}:latest
-            
-            docker stop api || true
-            docker rm api || true
-            
-            docker run -d --name api -p 8335:8335 \
-              -e DB_URL="${{ secrets.DB_URL }}" \
-              -e DB_PASS="${{ secrets.DB_PASS }}" \
-              -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
-              -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" \
-              ${{ secrets.ECR_REPOSITORY_URI }}:latest
+            # 1. Create Caddyfile
+            cat <<EOF > Caddyfile
+            api.pillarstrength.jordanvoss.dev {
+                reverse_proxy localhost:8335
+            }
+            EOF
+
+            # 2. Deploy with Docker Compose & Health Check
+            cat <<EOF > docker-compose.yml
+            services:
+              api:
+                image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
+                network_mode: host
+                environment:
+                  - DB_URL=${{ secrets.DB_URL }}
+                  - DB_USER=${{ secrets.DB_USER }}
+                  - DB_PASS=${{ secrets.DB_PASS }}
+                  - SUPABASE_JWT_ISSUER=${{ secrets.SUPABASE_JWT_ISSUER }}
+                  - SUPABASE_JWT_JWKS=${{ secrets.SUPABASE_JWT_JWKS }}
+                restart: always
+                healthcheck:
+                  test: ["CMD", "curl", "-f", "http://localhost:8335/actuator/health"]
+                  interval: 30s
+                  start_period: 60s
+              caddy:
+                image: caddy:latest
+                network_mode: host
+                volumes:
+                  - ./Caddyfile:/etc/caddy/Caddyfile
+                  - caddy_data:/data
+                restart: always
+            volumes:
+              caddy_data:
+            EOF
+
+            docker compose pull
+            docker compose up -d

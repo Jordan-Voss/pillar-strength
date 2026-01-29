@@ -85,6 +85,11 @@ EOF
   }
 }
 
+resource "aws_eip" "api_static_ip" {
+  instance = aws_instance.api_server.id
+  domain   = "vpc"
+}
+
 output "api_public_ip" {
   value = aws_instance.api_server.public_ip
 }
