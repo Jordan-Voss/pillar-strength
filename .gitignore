@@ -28,7 +28,7 @@ pnpm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
-*/target/
+
 # IDEs
 .vscode/
 .idea/
@@ -41,3 +41,8 @@ coverage/
 
 # Supabase
 .supabase/
+
+target/
+*.class
+*.jar
+*.iml
