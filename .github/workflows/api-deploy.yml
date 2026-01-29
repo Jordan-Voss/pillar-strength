@@ -1,4 +1,4 @@
-name: Production CI/CD
+name: API AWS Deployment
 on:
   push:
     branches: [ main ]
@@ -15,6 +15,12 @@ jobs:
           cache: maven
       - name: Build and Test
         working-directory: ./apps/api/pillar-strength
+        env:
+          DB_URL: jdbc:h2:mem:testdb
+          DB_USER: sa
+          DB_PASS: password
+          SUPABASE_JWT_ISSUER: https://dummy-issuer.com
+          SUPABASE_JWT_JWKS: https://dummy-issuer.com/.well-known/jwks.json
         run: mvn clean install
 
   provision:
@@ -30,13 +36,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
       - name: Terraform Apply
         working-directory: infra/terraform
+        id: set-ip
         run: |
           terraform init
           terraform apply -auto-approve
           echo "INSTANCE_IP=$(terraform output -raw api_public_ip)" >> $GITHUB_OUTPUT
-        id: set-ip
 
   deploy:
     needs: [test-and-package, provision]
@@ -60,18 +68,19 @@ jobs:
           host: ${{ needs.provision.outputs.instance_ip }}
           username: ubuntu
           key: ${{ secrets.AWS_SSH_KEY }}
+          port: 22
+          timeout: 60s
+          debug: true
           script: |
             sudo chmod 666 /var/run/docker.sock
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
-            # 1. Create Caddyfile
             cat <<EOF > Caddyfile
             api.pillarstrength.jordanvoss.dev {
                 reverse_proxy localhost:8335
             }
             EOF
 
-            # 2. Deploy with Docker Compose & Health Check
             cat <<EOF > docker-compose.yml
             services:
               api:
