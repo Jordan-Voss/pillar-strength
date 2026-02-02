@@ -73,6 +73,8 @@ jobs:
           debug: true
           script: |
             sudo chmod 666 /var/run/docker.sock
+            sudo apt-get update
+            sudo apt-get install -y docker-compose-plugin
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
             
             cat <<EOF > Caddyfile
