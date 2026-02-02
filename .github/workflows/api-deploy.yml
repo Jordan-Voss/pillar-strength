@@ -89,9 +89,9 @@ jobs:
                 environment:
                   - DB_URL=${{ secrets.DB_URL }}
                   - DB_USER=${{ secrets.DB_USER }}
-                  - DB_PASSWORD=${{ secrets.DB_PASS }}
-                  - SUPABASE_ISSUER_URI=${{ secrets.SUPABASE_JWT_ISSUER }}
-                  - SUPABASE_JWKS_URI=${{ secrets.SUPABASE_JWT_JWKS }}
+                  - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+                  - SUPABASE_ISSUER_URI=${{ secrets.SUPABASE_ISSUER_URI }}
+                  - SUPABASE_JWKS_URI=${{ secrets.SUPABASE_JWKS_URI }} 
                 restart: always
                 healthcheck:
                   test: ["CMD", "curl", "-f", "http://localhost:8335/actuator/health"]
