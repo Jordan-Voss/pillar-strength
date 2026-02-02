@@ -83,6 +83,7 @@ jobs:
             cat <<EOF > docker-compose.yml
             services:
               api:
+                container_name: pillar-strength-api
                 image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
                 network_mode: host
                 environment:
@@ -97,6 +98,7 @@ jobs:
                   interval: 30s
                   start_period: 60s
               caddy:
+                container_name: pillar-strength-caddy
                 image: caddy:latest
                 network_mode: host
                 volumes:
