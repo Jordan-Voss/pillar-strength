@@ -53,7 +53,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefix apps/app/pillar-strength
       - name: Run UI Lint
-        run: npx eslint apps/app/pillar-strength --ext .js,.jsx,.ts,.tsx
+        working-directory: apps/app/pillar-strength
+        run: npx eslint .
 
   infra-lint:
     needs: changes
