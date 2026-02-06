@@ -2,7 +2,7 @@ import expo from "eslint-config-universe/native.js";
 import reactNative from "eslint-plugin-react-native";
 
 export default [
-  ...expo,
+  expo,
   {
     plugins: {
       "react-native": reactNative,
