@@ -102,4 +102,5 @@ resource "aws_eip" "api_static_ip" {
 }
 
 output "api_public_ip" {
-value = aws_eip.api_static_ip.public_ip}
+value = aws_eip.api_static_ip.public_ip
+}
