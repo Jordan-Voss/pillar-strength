@@ -1,0 +1,33 @@
+{
+  "name": "pillar-strength",
+  "version": "1.0.0",
+  "description": "Pillar Strength is a training platform focused on **correctness, clarity, and long-term progression**.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+  "apps/api/**/*.java": [
+    "mvn -f apps/api/pillar-strength/pom.xml checkstyle:check"
+  ],
+  "apps/mobile/**/*.{ts,tsx,js}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "infra/terraform/**/*.tf": [
+    "terraform fmt"
+  ]
+}
+}
