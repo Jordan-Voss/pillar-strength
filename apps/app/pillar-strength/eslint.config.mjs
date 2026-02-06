@@ -1,4 +1,4 @@
-import expo from "eslint-config-universe/native";
+import expo from "eslint-config-universe/native.js";
 import reactNative from "eslint-plugin-react-native";
 
 export default [
