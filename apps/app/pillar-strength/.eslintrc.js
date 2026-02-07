@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['universe/native', 'plugin:react-native/all'],
+  extends: ['universe/native'],
   plugins: ['react-native'],
   rules: {
     'react-native/no-inline-styles': 'warn',
