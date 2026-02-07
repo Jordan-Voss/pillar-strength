@@ -1,16 +1,19 @@
-import expo from "eslint-config-universe/native.js";
-import reactNative from "eslint-plugin-react-native";
+import expo from 'eslint-config-expo';
+import reactNative from 'eslint-plugin-react-native';
 
 export default [
-  expo,
+  ...expo,
   {
     plugins: {
-      "react-native": reactNative,
+      'react-native': reactNative,
     },
     rules: {
-      "react-native/no-inline-styles": "warn",
-      "react-native/no-color-literals": "error",
-      "react-native/no-unused-styles": "error",
+      'react-native/no-inline-styles': 'warn',
+      'react-native/no-color-literals': 'error',
+      'react-native/no-unused-styles': 'error',
     },
   },
+  {
+    ignores: ['dist/**', '.expo/**', 'node_modules/**'],
+  }
 ];

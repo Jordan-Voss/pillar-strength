@@ -10,7 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "gen:api": "openapi-typescript ../../api/docs/openapi.json -o src/api/generated.ts",
-    "build:web": "expo export -p web"
+    "build:web": "expo export -p web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
@@ -31,6 +33,7 @@
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "eslint": "^9.39.2",
+    "eslint-config-expo": "^10.0.0",
     "eslint-config-universe": "^15.0.3",
     "eslint-plugin-react-native": "^5.0.0",
     "jest": "^29.7.0",
