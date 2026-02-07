@@ -1,14 +1,17 @@
-import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import Login from "../login";
-import { supabase } from "../../../src/lib/supabase";
 import { router } from "expo-router";
+import React from "react";
+
+import { supabase } from "../../../src/lib/supabase";
+import Login from "../login";
 
 jest.mock("../../../src/lib/supabase");
 
 describe("Login screen", () => {
   it("logs in and navigates to schedule on success", async () => {
-    (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({ error: null });
+    (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue({
+      error: null,
+    });
 
     const { getByText, getByPlaceholderText } = render(<Login />);
 

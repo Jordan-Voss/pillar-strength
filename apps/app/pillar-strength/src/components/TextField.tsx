@@ -1,5 +1,12 @@
 import React, { forwardRef } from "react";
-import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TextInputProps,
+} from "react-native";
+
 import { tokens } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 
@@ -11,12 +18,12 @@ type Props = TextInputProps & {
 
 export const TextField = forwardRef<TextInput, Props>(function TextField(
   { label, error, testID, ...props },
-  ref
+  ref,
 ) {
   const t = useTheme();
 
   return (
-    <View style={{ gap: 6 }}>
+    <View style={styles.container}>
       <Text style={[styles.label, { color: t.textSecondary }]}>{label}</Text>
       <TextInput
         ref={ref}
@@ -25,15 +32,22 @@ export const TextField = forwardRef<TextInput, Props>(function TextField(
         placeholderTextColor={t.textMuted}
         style={[
           styles.input,
-          { borderColor: error ? t.error : t.border, color: t.textPrimary, backgroundColor: t.card },
+          {
+            borderColor: error ? t.error : t.border,
+            color: t.textPrimary,
+            backgroundColor: t.card,
+          },
         ]}
       />
-      {error ? <Text style={[styles.error, { color: t.error }]}>{error}</Text> : null}
+      {error ? (
+        <Text style={[styles.error, { color: t.error }]}>{error}</Text>
+      ) : null}
     </View>
   );
 });
 
 const styles = StyleSheet.create({
+  container: { gap: 6 },
   label: { fontSize: tokens.font.small, fontWeight: "600" },
   input: {
     borderWidth: 1,

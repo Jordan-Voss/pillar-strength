@@ -1,20 +1,31 @@
 import React from "react";
-import { Keyboard, Platform, KeyboardAvoidingView, Pressable } from "react-native";
+import {
+  Keyboard,
+  Platform,
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import { Screen } from "./Screen";
 
 export function AuthFormScreen({ children }: { children: React.ReactNode }) {
   return (
     <Screen variant="auth">
-      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss} accessible={false}>
+      <Pressable
+        style={styles.flex}
+        onPress={Keyboard.dismiss}
+        accessible={false}
+      >
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={styles.flex}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <KeyboardAwareScrollView
             keyboardShouldPersistTaps="handled"
             enableOnAndroid
-            contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+            contentContainerStyle={styles.scrollContent}
           >
             {children}
           </KeyboardAwareScrollView>
@@ -23,3 +34,8 @@ export function AuthFormScreen({ children }: { children: React.ReactNode }) {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  scrollContent: { flexGrow: 1, justifyContent: "center" },
+});

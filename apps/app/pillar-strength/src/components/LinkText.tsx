@@ -1,10 +1,23 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, StyleSheet } from "react-native";
 
-export function LinkText({ title, onPress }: { title: string; onPress: () => void }) {
+import { useTheme } from "../theme/useTheme";
+
+export function LinkText({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress: () => void;
+}) {
+  const t = useTheme();
   return (
     <Pressable onPress={onPress} accessibilityRole="link">
-      <Text style={{ color: "#111", fontWeight: "700" }}>{title}</Text>
+      <Text style={[styles.text, { color: t.textPrimary }]}>{title}</Text>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  text: { fontWeight: "700" },
+});

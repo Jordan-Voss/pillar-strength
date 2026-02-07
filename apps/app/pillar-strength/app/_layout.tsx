@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
 import { Stack, usePathname, router } from "expo-router";
+import React, { useEffect } from "react";
+
 import { useSession } from "../src/lib/useSession";
 
 export default function RootLayout() {

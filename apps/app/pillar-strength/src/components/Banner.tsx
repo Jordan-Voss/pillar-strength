@@ -1,9 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+
 import { tokens } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 
-export function Banner({ message, kind = "error" }: { message: string; kind?: "error" | "info" }) {
+export function Banner({
+  message,
+  kind = "error",
+}: {
+  message: string;
+  kind?: "error" | "info";
+}) {
   const t = useTheme();
 
   const bg = kind === "error" ? t.errorSoft : t.infoSoft;

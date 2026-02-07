@@ -1,5 +1,12 @@
 import React from "react";
-import { Pressable, Text, ActivityIndicator, StyleSheet, ViewStyle } from "react-native";
+import {
+  Pressable,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  ViewStyle,
+} from "react-native";
+
 import { tokens } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 
@@ -24,31 +31,30 @@ export function Button({
 }: Props) {
   const t = useTheme();
   const isDisabled = disabled || loading;
+  const isPrimary = variant === "primary";
+
+  const dynamicStyles = {
+    button: {
+      backgroundColor: isPrimary ? t.accent : t.transparent,
+      borderWidth: isPrimary ? 0 : 1,
+      borderColor: t.border,
+      opacity: isDisabled ? 0.6 : 1,
+    },
+    contentColor: isPrimary ? t.white : t.textPrimary,
+  };
 
   return (
     <Pressable
       testID={testID}
       onPress={onPress}
       disabled={isDisabled}
-      style={[
-        styles.base,
-        variant === "primary"
-          ? { backgroundColor: t.accent }
-          : { borderWidth: 1, borderColor: t.border, backgroundColor: "transparent" },
-        isDisabled && { opacity: 0.6 },
-        style,
-      ]}
+      style={[styles.base, dynamicStyles.button, style]}
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator color={variant === "primary" ? "#FFF" : t.textPrimary} />
+        <ActivityIndicator color={dynamicStyles.contentColor} />
       ) : (
-        <Text
-          style={[
-            styles.text,
-            { color: variant === "primary" ? "#FFF" : t.textPrimary },
-          ]}
-        >
+        <Text style={[styles.text, { color: dynamicStyles.contentColor }]}>
           {title}
         </Text>
       )}

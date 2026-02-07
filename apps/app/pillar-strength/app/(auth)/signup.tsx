@@ -1,17 +1,24 @@
-import React, { useRef, useState } from "react";
-import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useRef, useState } from "react";
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AuthHeader } from "../../src/components/AuthHeader";
+import { Banner } from "../../src/components/Banner";
+import { Button } from "../../src/components/Button";
 import { Card } from "../../src/components/Card";
 import { TextField } from "../../src/components/TextField";
-import { Button } from "../../src/components/Button";
-import { Banner } from "../../src/components/Banner";
-import { AuthHeader } from "../../src/components/AuthHeader";
+import { supabase } from "../../src/lib/supabase";
 import { tokens } from "../../src/theme/tokens";
 import { useTheme } from "../../src/theme/useTheme";
-import { supabase } from "../../src/lib/supabase";
 
 type Units = "METRIC" | "IMPERIAL";
 type E1RMFormula = "EPLEY" | "BRZYCKI";
@@ -60,9 +67,11 @@ export default function Signup() {
     if (!fn) return setError("Please enter your first name.");
     if (!ln) return setError("Please enter your last name.");
     if (!em) return setError("Please enter your email address.");
-    if (!isValidEmail(em)) return setError("That email address doesn’t look valid.");
+    if (!isValidEmail(em))
+      return setError("That email address doesn’t look valid.");
     if (!password) return setError("Please enter a password.");
-    if (password.length < 6) return setError("Password must be at least 6 characters.");
+    if (password.length < 6)
+      return setError("Password must be at least 6 characters.");
     if (password !== confirm) return setError("Passwords do not match.");
 
     setLoading(true);
@@ -79,30 +88,37 @@ export default function Signup() {
 
       // If confirmations are ON, user exists but session may be null.
       if (!user) {
-        setInfo("Account created. Please check your email to confirm your account, then log in.");
+        setInfo(
+          "Account created. Please check your email to confirm your account, then log in.",
+        );
         setTimeout(() => router.replace("/(auth)/login"), 900);
         return;
       }
 
-      const { error: profileError } = await supabase.from("user_profiles").insert({
-        user_id: user.id,
-        first_name: fn,
-        last_name: ln,
-        units: defaults.units,
-        e1rm_formula: defaults.e1rm_formula,
-        theme: defaults.theme,
-      });
+      const { error: profileError } = await supabase
+        .from("user_profiles")
+        .insert({
+          user_id: user.id,
+          first_name: fn,
+          last_name: ln,
+          units: defaults.units,
+          e1rm_formula: defaults.e1rm_formula,
+          theme: defaults.theme,
+        });
 
       if (profileError) {
         throw new Error(
-          `Your account was created, but we couldn’t save your profile details yet. Please try logging in. (${profileError.message})`
+          `Your account was created, but we couldn’t save your profile details yet. Please try logging in. (${profileError.message})`,
         );
       }
 
       setInfo("Account created. You can now log in.");
       setTimeout(() => router.replace("/(auth)/login"), 600);
     } catch (e: any) {
-      setError(e?.message ?? "Something went wrong creating your account. Please try again.");
+      setError(
+        e?.message ??
+          "Something went wrong creating your account. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -127,7 +143,10 @@ export default function Signup() {
         ]}
       >
         <View style={styles.container}>
-          <AuthHeader title="Create account" subtitle="Start tracking your training." />
+          <AuthHeader
+            title="Create account"
+            subtitle="Start tracking your training."
+          />
 
           <Card>
             {error ? <Banner message={error} kind="error" /> : null}

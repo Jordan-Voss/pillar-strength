@@ -1,5 +1,6 @@
-import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
+import React from "react";
+
 import Signup from "../signup";
 
 describe("Signup screen", () => {
@@ -11,7 +12,10 @@ describe("Signup screen", () => {
     fireEvent.changeText(getByTestId("signup-email"), "a@b.com");
 
     fireEvent.changeText(getByTestId("signup-password"), "pass1234");
-    fireEvent.changeText(getByTestId("signup-confirm-password"), "different123");
+    fireEvent.changeText(
+      getByTestId("signup-confirm-password"),
+      "different123",
+    );
 
     fireEvent.press(getByTestId("signup-submit"));
 

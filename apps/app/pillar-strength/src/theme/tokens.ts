@@ -23,6 +23,8 @@ export const colors = {
     errorSoft: "#FEF2F2",
     info: "#2563EB",
     infoSoft: "#EEF2FF",
+    white: "#FFFFFF",
+    transparent: "transparent",
   },
   dark: {
     background: "#0B1220",
@@ -42,6 +44,8 @@ export const colors = {
     errorSoft: "#2A1216",
     info: "#60A5FA",
     infoSoft: "#0B2A55",
+    white: "#FFFFFF",
+    transparent: "transparent",
   },
 } as const;
 
@@ -64,6 +68,8 @@ export type ThemeColors = {
   errorSoft: string;
   info: string;
   infoSoft: string;
+  white: string;
+  transparent: string;
 };
 
 export type ThemeName = "light" | "dark";

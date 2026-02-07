@@ -6,7 +6,6 @@ jest.mock("expo-router", () => ({
   Redirect: () => null,
 }));
 jest.mock("./src/lib/supabase", () => ({
-
   supabase: {
     auth: {
       signUp: jest.fn(),

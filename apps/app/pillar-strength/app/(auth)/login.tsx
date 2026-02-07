@@ -1,27 +1,24 @@
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { router } from "expo-router";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AuthHeader } from "../../src/components/AuthHeader";
+import { Banner } from "../../src/components/Banner";
+import { Button } from "../../src/components/Button";
 import { Card } from "../../src/components/Card";
 import { TextField } from "../../src/components/TextField";
-import { Button } from "../../src/components/Button";
-import { Banner } from "../../src/components/Banner";
-import { AuthHeader } from "../../src/components/AuthHeader";
+import { supabase } from "../../src/lib/supabase";
 import { tokens } from "../../src/theme/tokens";
 import { useTheme } from "../../src/theme/useTheme";
-import { supabase } from "../../src/lib/supabase";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -85,7 +82,11 @@ export default function Login() {
   }
 
   return (
-    <Pressable style={[styles.flex, { backgroundColor: t.background }]} onPress={Keyboard.dismiss} accessible={false}>
+    <Pressable
+      style={[styles.flex, { backgroundColor: t.background }]}
+      onPress={Keyboard.dismiss}
+      accessible={false}
+    >
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
@@ -99,7 +100,10 @@ export default function Login() {
         ]}
       >
         <View style={styles.container}>
-          <AuthHeader title="Welcome back" subtitle="Log in to Pillar Strength." />
+          <AuthHeader
+            title="Welcome back"
+            subtitle="Log in to Pillar Strength."
+          />
 
           <Card>
             {error ? <Banner message={error} kind="error" /> : null}
@@ -138,7 +142,9 @@ export default function Login() {
             />
 
             <View style={styles.row}>
-              <Text style={[styles.muted, { color: t.textSecondary }]}>No account?</Text>
+              <Text style={[styles.muted, { color: t.textSecondary }]}>
+                No account?
+              </Text>
               <Text
                 style={[styles.link, { color: t.textPrimary }]}
                 onPress={() => router.push("/(auth)/signup")}
@@ -150,7 +156,7 @@ export default function Login() {
             </View>
           </Card>
         </View>
-       </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
     </Pressable>
   );
 }

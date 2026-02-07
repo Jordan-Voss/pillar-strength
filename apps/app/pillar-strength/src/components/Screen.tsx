@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import { tokens } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 
@@ -17,7 +18,9 @@ export function Screen({
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: t.background }]}>
-      <View style={[styles.container, variant === "auth" && styles.auth, style]}>
+      <View
+        style={[styles.container, variant === "auth" && styles.auth, style]}
+      >
         {children}
       </View>
     </SafeAreaView>
