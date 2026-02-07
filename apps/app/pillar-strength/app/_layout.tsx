@@ -1,31 +1,43 @@
-import { Stack, usePathname, router } from "expo-router";
-import React, { useEffect } from "react";
+import { useEffect, useState, createContext, useContext } from 'react';
+import { Slot, useRouter } from 'expo-router';
+import { supabase } from '../src/lib/supabase';
+import { apiRequest } from '../src/lib/api';
 
-import { useSession } from "../src/lib/useSession";
+export interface UserProfile {
+  userId: string;
+  units: 'METRIC' | 'IMPERIAL';
+  e1rmFormula: string;
+}
+
+const UserContext = createContext<UserProfile | null>(null);
+export const useUser = () => useContext(UserContext);
 
 export default function RootLayout() {
-  const { session, initializing } = useSession();
-  const pathname = usePathname();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    if (initializing) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        try {
+          const data = await apiRequest('/me');
+          setUserProfile(data as UserProfile);
+          router.replace('/(tabs)/schedule');
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+        }
+      } else {
+        setUserProfile(null);
+        router.replace('/(auth)/login');
+      }
+    });
 
-    const inAuth = pathname.startsWith("/(auth)");
-    const inTabs = pathname.startsWith("/(tabs)");
-
-    if (!session && inTabs) {
-      router.replace("/(auth)/login");
-    }
-
-    if (session && inAuth) {
-      router.replace("/(tabs)/schedule");
-    }
-  }, [session, initializing, pathname]);
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <UserContext.Provider value={userProfile}>
+      <Slot />
+    </UserContext.Provider>
   );
 }

@@ -10,3 +10,8 @@ export const supabase = createClient(url, anon, {
     detectSessionInUrl: true, // useful on web
   },
 });
+
+export const getAuthToken = async () => {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token || null;
+};
