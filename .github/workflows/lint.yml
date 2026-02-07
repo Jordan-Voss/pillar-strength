@@ -54,7 +54,7 @@ jobs:
         run: npm ci --prefix apps/app/pillar-strength
       - name: Run UI Lint
         working-directory: apps/app/pillar-strength
-        run: npx eslint .
+        run: npm run lint
 
   infra-lint:
     needs: changes
