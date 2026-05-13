@@ -39,8 +39,7 @@ class UserControllerTest {
         when(userService.getOrCreateMe(any(Jwt.class)))
                 .thenReturn(new MeResponse(
                         new UserDto(userId, "test@example.com", null, false),
-                        new PreferencesDto("system", "Europe/Dublin"),
-                        new FavouritesDto(List.of(), List.of())
+                        new PreferencesDto("system", "Europe/Dublin", Units.METRIC, E1rmFormula.EPLEY)
                 ));
 
         mockMvc.perform(get("/api/v1/me").with(jwt().jwt(jwt -> jwt
