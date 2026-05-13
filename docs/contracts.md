@@ -60,3 +60,39 @@ This ensures API changes cannot silently break the UI.
     - a new endpoint name while keeping `/v1` stable.
 
 MVP supports `/v1` only.
+
+## GET /v1/me
+
+Returns the authenticated user profile + settings.
+
+Auth: Bearer JWT (Supabase)
+
+200:
+```json
+{
+  "userId": "uuid",
+  "firstName": "Jordan",
+  "lastName": "Voss",
+  "units": "METRIC",
+  "e1rmFormula": "EPLEY",
+  "theme": "SYSTEM"
+}
+401: missing/invalid token
+404: profile not found
+
+yaml
+Copy code
+
+---
+
+### `MeResponse`
+```java
+
+public record MeResponse(
+        String userId,
+        String firstName,
+        String lastName,
+        String units,
+        String e1rmFormula,
+        String theme
+) {}

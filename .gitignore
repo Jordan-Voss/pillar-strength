@@ -1,8 +1,8 @@
 # Dependencies
-node_modules/
+*node_modules/
 
 # Expo
-.expo/
+*.expo/
 expo-env.d.ts
 
 # Build output
@@ -21,8 +21,8 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Env files
-.env
-.env.*
+*.env
+*.env.*
 !.env.example
 
 # OS files
@@ -46,3 +46,5 @@ target/
 *.class
 *.jar
 *.iml
+
+*application-dev.properties

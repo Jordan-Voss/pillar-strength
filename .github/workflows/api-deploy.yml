@@ -1,117 +1,214 @@
 name: API AWS Deployment
+
 on:
   push:
-    branches: [ main ]
+    branches: [main, master]
     paths:
       - "apps/api/**"
       - "infra/terraform/**"
       - ".github/workflows/api-deploy.yml"
 
 jobs:
-  test-and-package:
+  test:
+    name: Test API
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/api/pillarstrength
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "25"
+          distribution: temurin
           cache: maven
-      - name: Build and Test
-        working-directory: ./apps/api/pillar-strength
+
+      - name: Run tests
         env:
           DB_URL: jdbc:h2:mem:testdb
-          DB_USER: sa
-          DB_PASS: password
-          SUPABASE_JWT_ISSUER: https://dummy-issuer.com
-          SUPABASE_JWT_JWKS: https://dummy-issuer.com/.well-known/jwks.json
-        run: mvn clean install
+          DB_USERNAME: sa
+          DB_PASSWORD: password
+          SUPABASE_PROJECT_URL: https://example.supabase.co
+          SUPABASE_JWKS_URI: https://example.supabase.co/auth/v1/.well-known/jwks.json
+          CORS_ALLOWED_ORIGINS: http://localhost:8081
+        run: ./mvnw clean test
 
   provision:
-    needs: test-and-package
+    name: Provision AWS
     runs-on: ubuntu-latest
+    needs: test
+
     outputs:
-      instance_ip: ${{ steps.set-ip.outputs.INSTANCE_IP }}
+      ip: ${{ steps.tf.outputs.IP }}
+      ecr: ${{ steps.tf.outputs.ECR }}
+
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEPLOY_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_wrapper: false
-      - name: Terraform Apply
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Write SSH public key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PUBLIC_KEY }}" > ~/.ssh/pillarstrength.pub
+
+      - name: Terraform apply
+        id: tf
         working-directory: infra/terraform
-        id: set-ip
         run: |
           terraform init
-          terraform apply -auto-approve
-          echo "INSTANCE_IP=$(terraform output -raw api_public_ip)" >> $GITHUB_OUTPUT
+          terraform apply -auto-approve \
+            -var="public_key_path=$HOME/.ssh/pillarstrength.pub"
 
-  deploy:
-    needs: [test-and-package, provision]
+          echo "IP=$(terraform output -raw api_public_ip)" >> "$GITHUB_OUTPUT"
+          echo "ECR=$(terraform output -raw api_ecr_repository_url)" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build and Push Image
     runs-on: ubuntu-latest
+    needs: provision
+
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEPLOY_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Build & Push Image
+
+      - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest ./apps/api/pillar-strength
-          docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
-      - name: SSH and Deploy
+          docker build -t ${{ needs.provision.outputs.ecr }}:${{ github.sha }} ./apps/api/pillarstrength
+          docker tag ${{ needs.provision.outputs.ecr }}:${{ github.sha }} ${{ needs.provision.outputs.ecr }}:latest
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ needs.provision.outputs.ecr }}:${{ github.sha }}
+          docker push ${{ needs.provision.outputs.ecr }}:latest
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs:
+      - provision
+      - build
+
+    steps:
+      - name: Deploy containers
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ needs.provision.outputs.instance_ip }}
+          host: ${{ needs.provision.outputs.ip }}
           username: ubuntu
-          key: ${{ secrets.AWS_SSH_KEY }}
-          port: 22
-          timeout: 60s
-          debug: true
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
-            
-            cat <<EOF > Caddyfile
-            api.pillarstrength.jordanvoss.dev {
-                reverse_proxy localhost:8335
-            }
-            EOF
+            set -e
+
+            if ! command -v docker >/dev/null; then
+              sudo apt-get update
+              sudo apt-get install -y ca-certificates curl gnupg unzip
+
+              sudo install -m 0755 -d /etc/apt/keyrings
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+              sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list
+
+              sudo apt-get update
+              sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+              sudo systemctl enable --now docker
+              sudo usermod -aG docker ubuntu
+            fi
+
+            if ! command -v aws >/dev/null; then
+              cd /tmp
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
+              unzip -q awscliv2.zip
+              sudo ./aws/install
+            fi
+
+            mkdir -p ~/pillarstrength
+            cd ~/pillarstrength
+
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ needs.provision.outputs.ecr }}
 
             cat <<EOF > docker-compose.yml
             services:
-              api:
-                container_name: pillar-strength-api
-                image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
-                network_mode: host
+              pillarstrength-api:
+                container_name: pillarstrength-api
+                image: ${{ needs.provision.outputs.ecr }}:latest
+                ports:
+                  - "8080:8080"
                 environment:
-                  - DB_URL=${{ secrets.DB_URL }}
-                  - DB_USER=${{ secrets.DB_USER }}
-                  - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-                  - SUPABASE_ISSUER_URI=${{ secrets.SUPABASE_ISSUER_URI }}
-                  - SUPABASE_JWKS_URI=${{ secrets.SUPABASE_JWKS_URI }} 
+                  DB_URL: ${{ secrets.DB_URL }}
+                  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+                  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                  SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+                  CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+                  API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
                 restart: always
-                healthcheck:
-                  test: ["CMD", "curl", "-f", "http://localhost:8335/actuator/health"]
-                  interval: 30s
-                  start_period: 60s
+
               caddy:
-                container_name: pillar-strength-caddy
-                image: caddy:latest
-                network_mode: host
+                container_name: pillarstrength-caddy
+                image: caddy:2
+                ports:
+                  - "80:80"
+                  - "443:443"
                 volumes:
                   - ./Caddyfile:/etc/caddy/Caddyfile
                   - caddy_data:/data
+                depends_on:
+                  - pillarstrength-api
                 restart: always
+
             volumes:
               caddy_data:
             EOF
 
+            cat <<EOF > Caddyfile
+            api.pillarstrength.jordanvoss.dev {
+                reverse_proxy pillarstrength-api:8080
+            }
+            EOF
+
+            docker compose down --remove-orphans || true
             docker compose pull
-            docker compose up -d
+            docker compose up -d --remove-orphans
+
+  verify:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Check health endpoint
+        run: |
+          for i in {1..30}; do
+            if curl -fsS https://api.pillarstrength.jordanvoss.dev/api/v1/health; then
+              echo "API is healthy"
+              exit 0
+            fi
+
+            echo "API not ready yet, retrying..."
+            sleep 5
+          done
+
+          echo "API failed health check"
+          exit 1
