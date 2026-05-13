@@ -94,7 +94,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 }
 
 resource "aws_key_pair" "deploy" {
-  key_name   = "pillarstrength-key"
+  key_name   = "pillarstrength-deploy-key"
   public_key = file(var.public_key_path)
 }
 
