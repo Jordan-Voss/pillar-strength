@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "pillarstrength",
+    "slug": "pillarstrength",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand/splash.png",
+    "scheme": "pillarstrength",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "icon": "./assets/brand/splash.png",
+      "bundleIdentifier": "com.jordanvoss.pillarstrength",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2E3E54",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/brand/splash.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2E3E54",
+          "android": {
+            "image": "./assets/brand/splash.png",
+            "imageWidth": 76
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4bdf2550-8a8a-46e8-80af-02f3e65e1fb0"
+      }
+    },
+    "owner": "jimjimjimmels"
+  }
+}
