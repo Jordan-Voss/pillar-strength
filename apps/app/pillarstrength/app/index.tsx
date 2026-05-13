@@ -197,8 +197,8 @@ export default function Index() {
 
           <Text style={styles.subtitle}>
             {mode === 'signIn'
-              ? 'Sign in to continue to RugbyLive.'
-              : 'Create your RugbyLive account.'}
+              ? 'Sign in to continue to pillarstrength.'
+              : 'Create your pillarstrength account.'}
           </Text>
 
           <TextInput
