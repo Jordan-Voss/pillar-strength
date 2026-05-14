@@ -155,7 +155,7 @@ jobs:
                 container_name: pillarstrength-api
                 image: ${{ needs.provision.outputs.ecr }}:latest
                 ports:
-                  - "8080:8080"
+                  - "8335:8335"
                 environment:
                   DB_URL: ${{ secrets.DB_URL }}
                   DB_USERNAME: ${{ secrets.DB_USERNAME }}
@@ -184,7 +184,7 @@ jobs:
 
             cat <<EOF > Caddyfile
             api.pillarstrength.jordanvoss.dev {
-                reverse_proxy pillarstrength-api:8080
+                reverse_proxy pillarstrength-api:8335
             }
             EOF
 
