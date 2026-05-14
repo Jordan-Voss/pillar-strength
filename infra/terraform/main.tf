@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.8.0"
+  required_version = ">= 1.15.3"
 
   required_providers {
     aws = {
@@ -106,7 +106,7 @@ resource "aws_instance" "api" {
   vpc_security_group_ids = [aws_security_group.api_sg.id]
 
   tags = {
-    Name    = "pillarstrength-API"
+    Name    = "pillarstrength-api"
     Project = "pillarstrength"
   }
 }
@@ -116,7 +116,7 @@ resource "aws_eip" "api_ip" {
   domain   = "vpc"
 
   tags = {
-    Name    = "pillarstrength-API-IP"
+    Name    = "pillarstrength-api-ip"
     Project = "pillarstrength"
   }
 }

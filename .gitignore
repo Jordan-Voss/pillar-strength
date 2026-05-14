@@ -48,3 +48,8 @@ target/
 *.iml
 
 *application-dev.properties
+
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.terraform.lock.hcl
