@@ -4,11 +4,11 @@
     "slug": "pillarstrength",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/brand/splash.png",
+    "icon": "./assets/brand/icon.png",
     "scheme": "pillarstrength",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/brand/splash.png",
+      "icon": "./assets/brand/icon.png",
       "bundleIdentifier": "com.jordanvoss.pillarstrength",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -25,7 +25,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/brand/splash.png"
+      "favicon": "./assets/brand/web-splash.png"
     },
     "plugins": [
       "expo-router",
@@ -34,7 +34,7 @@
         {
           "backgroundColor": "#2E3E54",
           "android": {
-            "image": "./assets/brand/splash.png",
+            "image": "./assets/brand/mobile-splash.png",
             "imageWidth": 76
           }
         }

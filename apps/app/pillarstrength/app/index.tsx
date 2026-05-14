@@ -141,7 +141,7 @@ export default function Index() {
       <SafeAreaView style={styles.screen}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/brand/logo-text-red.png')}
+            source={require('../assets/brand/horizontal-nobg.png')}
             resizeMode="contain"
             style={styles.headerLogo}
           />
@@ -183,11 +183,11 @@ export default function Index() {
       >
         <View style={styles.logoSection}>
           <Image
-            source={require('../assets/brand/splash.png')}
+            source={require('../assets/brand/horizontal-nobg.png')}
             resizeMode="contain"
             style={styles.logo}
           />
-          <Text style={styles.tagline}>Live rugby scores, stats and fixtures.</Text>
+          <Text style={styles.tagline}>Train with structure. Progress with purpose.</Text>
         </View>
 
         <View style={styles.card}>
@@ -285,7 +285,7 @@ const styles = {
     gap: theme.spacing.md,
   },
   logo: {
-    width: 280,
+    width: 350,
     height: 180,
   },
   tagline: {

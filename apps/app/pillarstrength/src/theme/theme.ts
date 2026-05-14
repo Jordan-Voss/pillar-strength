@@ -1,188 +1,171 @@
-// Define base colors for reuse
-const BASE_COLORS = {
-  // Light theme palette
+// src/theme/theme.ts
+
+const BRAND_COLORS = {
+  // Core brand
+  NAVY: '#0E1D3D',
+  NAVY_ELEVATED: '#13264D',
+  NAVY_LIGHT: '#1B3566',
+  NAVY_DARK: '#081225',
+
+  SKY_BLUE: '#8EBAE3',
+  SKY_BLUE_BRIGHT: '#A7CCEE',
+  SKY_BLUE_DARK: '#5F95C4',
+
+  CRIMSON: '#D7263D',
+  CRIMSON_DARK: '#B71F32',
+  CRIMSON_LIGHT: '#EF4A5F',
+
   WHITE: '#FFFFFF',
   OFF_WHITE: '#F5F7FA',
-  LIGHT_GRAY: '#F8F9FA',
-  BORDER_GRAY: '#ECF0F1',
-  MEDIUM_GRAY: '#BDC3C7',
-  SLATE_LIGHT: '#7F8C8D',
-  SLATE: '#34495E',
-  SLATE_LIGHTER: '#4A6484',
+  LIGHT_SURFACE: '#EEF2F7',
 
-  
-  // Dark theme palette
-  DARK_BG: '#2E3E54',
-  DARKER_BG: '#263545',
-  DARK_SURFACE: '#2C3E50',
-  DARK_ELEVATED: '#34495E',
-  DARK_CARD: '#34495E',
-  DARK_BORDER: '#1C2833',
-  
-  // Accent colors
-  RED: '#E74C3C',
-  BLUE: '#3498DB',
-  GREEN: '#2ECC71',
-  YELLOW: '#F1C40F',
-  ORANGE: '#E67E22',
-  TEAL: '#1ABC9C',
-  ERROR_RED: '#DC3545',
+  SLATE_100: '#E8ECF2',
+  SLATE_200: '#D0D8E2',
+  SLATE_300: '#AAB7C8',
+  SLATE_400: '#7B8CA5',
+  SLATE_500: '#5A6B84',
+  SLATE_600: '#3D4C63',
+  SLATE_700: '#27354A',
+
+  SUCCESS: '#2ECC71',
+  WARNING: '#F39C12',
+  ERROR: '#E74C3C',
 };
 
 export const lightTheme = {
   name: 'light',
-  
+
   colors: {
-    // Core UI surfaces
     bg: {
-      primary: BASE_COLORS.OFF_WHITE,        // Main app background
-      secondary: BASE_COLORS.WHITE,          // Cards, sections, headers
-      tertiary: BASE_COLORS.LIGHT_GRAY,      // Secondary cards, highlights
-      elevated: BASE_COLORS.WHITE,           // Elevated elements (modals, dropdowns)
-      dropDown: BASE_COLORS.WHITE,
+      primary: BRAND_COLORS.OFF_WHITE,
+      secondary: BRAND_COLORS.WHITE,
+      tertiary: BRAND_COLORS.LIGHT_SURFACE,
+      elevated: BRAND_COLORS.WHITE,
+      dropDown: BRAND_COLORS.WHITE,
     },
-    
-    // Surface variants for different components
+
     surface: {
-      primary: BASE_COLORS.OFF_WHITE,        // Main content area background
-      secondary: BASE_COLORS.WHITE,          // Card backgrounds
-      elevated: BASE_COLORS.WHITE,           // Elevated cards or dialogs
-      header: BASE_COLORS.WHITE,             // Header background
-      sectionHeader: BASE_COLORS.LIGHT_GRAY, // Section header backgrounds
+      primary: BRAND_COLORS.OFF_WHITE,
+      secondary: BRAND_COLORS.WHITE,
+      elevated: BRAND_COLORS.WHITE,
+      header: BRAND_COLORS.WHITE,
+      sectionHeader: BRAND_COLORS.LIGHT_SURFACE,
     },
-    
-    // Interactive elements
+
     interactive: {
-      primary: BASE_COLORS.RED,              // Primary buttons, selected items
-      secondary: BASE_COLORS.BLUE,           // Secondary actions
-      tertiary: BASE_COLORS.TEAL,            // Tertiary actions
-      critical: BASE_COLORS.RED,             // Important alerts, notifications
-      positive: BASE_COLORS.GREEN,           // Success states
-      caution: BASE_COLORS.YELLOW,           // Warning states
-      disabled: BASE_COLORS.MEDIUM_GRAY,     // Disabled state
+      primary: BRAND_COLORS.CRIMSON,
+      secondary: BRAND_COLORS.SKY_BLUE,
+      tertiary: BRAND_COLORS.NAVY_LIGHT,
+      critical: BRAND_COLORS.CRIMSON,
+      positive: BRAND_COLORS.SUCCESS,
+      caution: BRAND_COLORS.WARNING,
+      disabled: BRAND_COLORS.SLATE_300,
     },
-    
-    // Text hierarchy
+
     text: {
-      primary: BASE_COLORS.SLATE,            // Primary text (titles, important)
-      secondary: BASE_COLORS.SLATE_LIGHT,    // Secondary text (descriptions)
-      subtle: BASE_COLORS.MEDIUM_GRAY,       // Subtle text (hints, captions)
-      inverse: BASE_COLORS.WHITE,            // Text on dark backgrounds
-      accent: BASE_COLORS.RED,               // Highlighted text
-      link: BASE_COLORS.BLUE,                // Links
-      disabled: BASE_COLORS.SLATE_LIGHT,     // Disabled text
+      primary: BRAND_COLORS.NAVY,
+      secondary: BRAND_COLORS.SLATE_500,
+      subtle: BRAND_COLORS.SLATE_400,
+      inverse: BRAND_COLORS.WHITE,
+      accent: BRAND_COLORS.CRIMSON,
+      link: BRAND_COLORS.NAVY_LIGHT,
+      disabled: BRAND_COLORS.SLATE_400,
     },
-    
-    // Status indicators
+
     status: {
-      success: BASE_COLORS.GREEN,
-      error: BASE_COLORS.ERROR_RED,
-      warning: BASE_COLORS.ORANGE,
-      info: BASE_COLORS.BLUE,
-      live: BASE_COLORS.RED,
-      upcoming: BASE_COLORS.BLUE,
-      completed: BASE_COLORS.SLATE_LIGHT,
+      success: BRAND_COLORS.SUCCESS,
+      error: BRAND_COLORS.ERROR,
+      warning: BRAND_COLORS.WARNING,
+      info: BRAND_COLORS.SKY_BLUE_DARK,
+      live: BRAND_COLORS.CRIMSON,
+      upcoming: BRAND_COLORS.SKY_BLUE_DARK,
+      completed: BRAND_COLORS.SLATE_400,
     },
-    
-    // Navigation elements
+
     navigation: {
-      active: BASE_COLORS.RED,               // Active tab
-      inactive: BASE_COLORS.SLATE_LIGHTER,     // Inactive tabs
-      background: BASE_COLORS.WHITE,         // Tab bar background
-      border: BASE_COLORS.BORDER_GRAY,       // Navigation borders
+      active: BRAND_COLORS.CRIMSON,
+      inactive: BRAND_COLORS.SLATE_400,
+      background: BRAND_COLORS.WHITE,
+      border: BRAND_COLORS.SLATE_100,
     },
-    
-    // Borders and dividers
-    border: BASE_COLORS.BORDER_GRAY,         // Standard borders
-    
-    // Specific component styles
+
+    border: BRAND_COLORS.SLATE_100,
+
     card: {
-      background: BASE_COLORS.WHITE,
-      border: BASE_COLORS.BORDER_GRAY,
-      shadow: 'rgba(0, 0, 0, 0.05)',
-      scoreHighlight: BASE_COLORS.RED,
-      headerBackground: BASE_COLORS.WHITE,
+      background: BRAND_COLORS.WHITE,
+      border: BRAND_COLORS.SLATE_100,
+      shadow: 'rgba(14, 29, 61, 0.06)',
+      headerBackground: BRAND_COLORS.WHITE,
+      highlight: BRAND_COLORS.CRIMSON,
     },
-    
-    // League section styles
-    league: {
-      headerBackground: BASE_COLORS.WHITE,
-      itemBackground: BASE_COLORS.WHITE,
+
+    workout: {
+      active: BRAND_COLORS.CRIMSON,
+      completed: BRAND_COLORS.SUCCESS,
+      skipped: BRAND_COLORS.SLATE_400,
+      rest: BRAND_COLORS.SKY_BLUE_DARK,
+      pr: BRAND_COLORS.CRIMSON,
     },
-    
-    // Match-specific styles
-    match: {
-      live: BASE_COLORS.RED,
-      upcoming: BASE_COLORS.BLUE,
-      completed: BASE_COLORS.SLATE_LIGHT,
-      homeTeamText: BASE_COLORS.SLATE,
-      awayTeamText: BASE_COLORS.SLATE,
-      scoreText: BASE_COLORS.RED,
-      timeText: BASE_COLORS.SLATE_LIGHT,
+
+    lift: {
+      primary: BRAND_COLORS.NAVY,
+      secondary: BRAND_COLORS.SLATE_500,
+      accent: BRAND_COLORS.CRIMSON,
+      volume: BRAND_COLORS.SKY_BLUE_DARK,
+      intensity: BRAND_COLORS.CRIMSON,
     },
-    
-    // Calendar/date selector styles
+
     calendar: {
-      selectedDay: BASE_COLORS.RED,
-      selectedDayText: BASE_COLORS.WHITE,
-      normalDay: BASE_COLORS.WHITE,
-      normalDayText: BASE_COLORS.SLATE,
-      todayIndicator: BASE_COLORS.RED,
-      weekdayText: BASE_COLORS.SLATE_LIGHT,
+      selectedDay: BRAND_COLORS.CRIMSON,
+      selectedDayText: BRAND_COLORS.WHITE,
+      normalDay: BRAND_COLORS.WHITE,
+      normalDayText: BRAND_COLORS.NAVY,
+      todayIndicator: BRAND_COLORS.CRIMSON,
+      weekdayText: BRAND_COLORS.SLATE_400,
     },
-    
-    // Rugby-specific elements
-    pitch: {
-      background: '#27AE60',                // Bright green for field
-      lines: BASE_COLORS.WHITE,
-      text: BASE_COLORS.WHITE,
-    },
-    
-    // Score elements
+
     score: {
-      primary: BASE_COLORS.RED,
-      secondary: BASE_COLORS.SLATE,
-      divider: BASE_COLORS.SLATE_LIGHT,
+      primary: BRAND_COLORS.CRIMSON,
+      secondary: BRAND_COLORS.NAVY,
+      divider: BRAND_COLORS.SLATE_300,
     },
-    
-    // Form elements
+
     input: {
-      background: BASE_COLORS.WHITE,
-      text: BASE_COLORS.SLATE,
-      placeholder: BASE_COLORS.MEDIUM_GRAY,
-      border: BASE_COLORS.BORDER_GRAY,
-      focusBorder: BASE_COLORS.BLUE,
-      error: BASE_COLORS.RED,
+      background: BRAND_COLORS.WHITE,
+      text: BRAND_COLORS.NAVY,
+      placeholder: BRAND_COLORS.SLATE_400,
+      border: BRAND_COLORS.SLATE_100,
+      focusBorder: BRAND_COLORS.SKY_BLUE_DARK,
+      error: BRAND_COLORS.ERROR,
     },
-    
-    // Stats elements
+
     stats: {
-      positive: BASE_COLORS.GREEN,
-      negative: BASE_COLORS.RED,
-      neutral: BASE_COLORS.BLUE,
-      barBackground: BASE_COLORS.LIGHT_GRAY,
-      textPrimary: BASE_COLORS.SLATE,
-      textSecondary: BASE_COLORS.SLATE_LIGHT,
+      positive: BRAND_COLORS.SUCCESS,
+      negative: BRAND_COLORS.ERROR,
+      neutral: BRAND_COLORS.SKY_BLUE_DARK,
+      barBackground: BRAND_COLORS.LIGHT_SURFACE,
+      textPrimary: BRAND_COLORS.NAVY,
+      textSecondary: BRAND_COLORS.SLATE_500,
     },
   },
-  
-  // You can also define spacing, typography, etc. here
+
   spacing: {
     xs: 4,
-    sm: 8, 
+    sm: 8,
     md: 16,
     lg: 24,
     xl: 32,
     xxl: 48,
   },
-  
+
   borderRadius: {
     sm: 4,
     md: 8,
     lg: 16,
+    xl: 24,
     pill: 999,
   },
-  
+
   shadows: {
     none: {
       shadowColor: 'transparent',
@@ -192,172 +175,149 @@ export const lightTheme = {
       elevation: 0,
     },
     sm: {
-      shadowColor: '#000000',
+      shadowColor: BRAND_COLORS.NAVY,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.05,
       shadowRadius: 2,
       elevation: 1,
     },
     md: {
-      shadowColor: '#000000',
+      shadowColor: BRAND_COLORS.NAVY,
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
       elevation: 2,
     },
     lg: {
-      shadowColor: '#000000',
+      shadowColor: BRAND_COLORS.NAVY,
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 6,
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
       elevation: 4,
     },
   },
 };
 
-// Dark theme that mirrors the structure of the light theme
 export const darkTheme = {
   name: 'dark',
-  
+
   colors: {
-    // Core UI surfaces
     bg: {
-      primary: BASE_COLORS.DARK_BG,         // Main app background
-      secondary: BASE_COLORS.DARK_SURFACE,   // Cards, sections, headers
-      tertiary: BASE_COLORS.DARK_ELEVATED,   // Secondary cards, highlights
-      elevated: BASE_COLORS.DARK_ELEVATED,   // Elevated elements
-      dropDown: BASE_COLORS.DARKER_BG,       // Dropdown background
+      primary: BRAND_COLORS.NAVY,
+      secondary: BRAND_COLORS.NAVY_ELEVATED,
+      tertiary: BRAND_COLORS.NAVY_LIGHT,
+      elevated: BRAND_COLORS.NAVY_ELEVATED,
+      dropDown: BRAND_COLORS.NAVY_DARK,
     },
-    
-    // Surface variants for different components
+
     surface: {
-      primary: BASE_COLORS.DARK_BG,         // Main content area background
-      secondary: BASE_COLORS.DARK_SURFACE,   // Card backgrounds
-      elevated: BASE_COLORS.DARK_ELEVATED,   // Elevated cards or dialogs
-      header: BASE_COLORS.DARK_BG,           // Header background
-      sectionHeader: BASE_COLORS.DARK_SURFACE, // Section header backgrounds
+      primary: BRAND_COLORS.NAVY,
+      secondary: BRAND_COLORS.NAVY_ELEVATED,
+      elevated: BRAND_COLORS.NAVY_LIGHT,
+      header: BRAND_COLORS.NAVY,
+      sectionHeader: BRAND_COLORS.NAVY_ELEVATED,
     },
-    
-    // Interactive elements
+
     interactive: {
-      primary: BASE_COLORS.ORANGE,           // Primary buttons, selected items
-      secondary: BASE_COLORS.TEAL,           // Secondary actions
-      tertiary: BASE_COLORS.BLUE,            // Tertiary actions
-      critical: BASE_COLORS.ORANGE,          // Important alerts, notifications
-      positive: BASE_COLORS.GREEN,           // Success states
-      caution: BASE_COLORS.YELLOW,           // Warning states
-      disabled: BASE_COLORS.SLATE_LIGHT,     // Disabled state
+      primary: BRAND_COLORS.CRIMSON,
+      secondary: BRAND_COLORS.SKY_BLUE,
+      tertiary: BRAND_COLORS.SKY_BLUE_BRIGHT,
+      critical: BRAND_COLORS.CRIMSON,
+      positive: BRAND_COLORS.SUCCESS,
+      caution: BRAND_COLORS.WARNING,
+      disabled: BRAND_COLORS.SLATE_500,
     },
-    
-    // Text hierarchy
+
     text: {
-      primary: BASE_COLORS.WHITE,            // Primary text (titles, important)
-      secondary: BASE_COLORS.LIGHT_GRAY,     // Secondary text (descriptions)
-      subtle: '#B2BEC3',                     // Subtle text (hints, captions)
-      inverse: BASE_COLORS.SLATE,            // Text on light backgrounds
-      accent: BASE_COLORS.ORANGE,            // Highlighted text
-      link: BASE_COLORS.TEAL,                // Links
-      disabled: BASE_COLORS.SLATE_LIGHT,     // Disabled text
+      primary: BRAND_COLORS.WHITE,
+      secondary: BRAND_COLORS.SLATE_200,
+      subtle: BRAND_COLORS.SLATE_300,
+      inverse: BRAND_COLORS.NAVY,
+      accent: BRAND_COLORS.CRIMSON_LIGHT,
+      link: BRAND_COLORS.SKY_BLUE,
+      disabled: BRAND_COLORS.SLATE_400,
     },
-    
-    // Status indicators
+
     status: {
-      success: BASE_COLORS.TEAL,
-      error: BASE_COLORS.ERROR_RED,
-      warning: BASE_COLORS.ORANGE,
-      info: BASE_COLORS.BLUE,
-      live: BASE_COLORS.ORANGE,
-      upcoming: BASE_COLORS.BLUE,
-      completed: BASE_COLORS.LIGHT_GRAY,
+      success: BRAND_COLORS.SUCCESS,
+      error: BRAND_COLORS.ERROR,
+      warning: BRAND_COLORS.WARNING,
+      info: BRAND_COLORS.SKY_BLUE,
+      live: BRAND_COLORS.CRIMSON,
+      upcoming: BRAND_COLORS.SKY_BLUE,
+      completed: BRAND_COLORS.SLATE_300,
     },
-    
-    // Navigation elements
+
     navigation: {
-      active: BASE_COLORS.BLUE,              // Active tab
-      inactive: '#B2BEC3',                   // Inactive tabs
-      background: BASE_COLORS.SLATE,         // Tab bar background
-      border: BASE_COLORS.DARK_BORDER,       // Navigation borders
+      active: BRAND_COLORS.CRIMSON,
+      inactive: BRAND_COLORS.SLATE_300,
+      background: BRAND_COLORS.NAVY_ELEVATED,
+      border: BRAND_COLORS.SLATE_700,
     },
-    
-    // Borders and dividers
-    border: BASE_COLORS.SLATE,               // Standard borders
-    
-    // Specific component styles
+
+    border: BRAND_COLORS.SLATE_700,
+
     card: {
-      background: BASE_COLORS.DARK_SURFACE,
-      border: BASE_COLORS.DARK_BORDER,
-      shadow: 'rgba(0, 0, 0, 0.2)',
-      scoreHighlight: BASE_COLORS.ORANGE,
-      headerBackground: BASE_COLORS.DARK_ELEVATED,
+      background: BRAND_COLORS.NAVY_ELEVATED,
+      border: BRAND_COLORS.SLATE_700,
+      shadow: 'rgba(0, 0, 0, 0.35)',
+      headerBackground: BRAND_COLORS.NAVY_LIGHT,
+      highlight: BRAND_COLORS.CRIMSON,
     },
-    
-    // League section styles
-    league: {
-      headerBackground: BASE_COLORS.DARK_SURFACE,
-      itemBackground: BASE_COLORS.DARK_ELEVATED,
+
+    workout: {
+      active: BRAND_COLORS.CRIMSON,
+      completed: BRAND_COLORS.SUCCESS,
+      skipped: BRAND_COLORS.SLATE_400,
+      rest: BRAND_COLORS.SKY_BLUE,
+      pr: BRAND_COLORS.CRIMSON_LIGHT,
     },
-    
-    // Match-specific styles
-    match: {
-      live: BASE_COLORS.ORANGE,
-      upcoming: BASE_COLORS.BLUE,
-      completed: BASE_COLORS.LIGHT_GRAY,
-      homeTeamText: BASE_COLORS.WHITE,
-      awayTeamText: BASE_COLORS.WHITE,
-      scoreText: BASE_COLORS.ORANGE,
-      timeText: BASE_COLORS.LIGHT_GRAY,
+
+    lift: {
+      primary: BRAND_COLORS.WHITE,
+      secondary: BRAND_COLORS.SLATE_200,
+      accent: BRAND_COLORS.CRIMSON_LIGHT,
+      volume: BRAND_COLORS.SKY_BLUE,
+      intensity: BRAND_COLORS.CRIMSON,
     },
-    
-    // Calendar/date selector styles
+
     calendar: {
-      selectedDay: BASE_COLORS.ORANGE,
-      selectedDayText: BASE_COLORS.WHITE,
-      normalDay: BASE_COLORS.DARK_SURFACE,
-      normalDayText: BASE_COLORS.WHITE,
-      todayIndicator: BASE_COLORS.ORANGE,
-      weekdayText: BASE_COLORS.LIGHT_GRAY,
+      selectedDay: BRAND_COLORS.CRIMSON,
+      selectedDayText: BRAND_COLORS.WHITE,
+      normalDay: BRAND_COLORS.NAVY_ELEVATED,
+      normalDayText: BRAND_COLORS.WHITE,
+      todayIndicator: BRAND_COLORS.CRIMSON_LIGHT,
+      weekdayText: BRAND_COLORS.SLATE_300,
     },
-    
-    // Rugby-specific elements
-    pitch: {
-      background: BASE_COLORS.SLATE,         // Darker field for dark mode
-      lines: BASE_COLORS.WHITE,
-      text: BASE_COLORS.WHITE,
-    },
-    
-    // Score elements
+
     score: {
-      primary: BASE_COLORS.ORANGE,
-      secondary: BASE_COLORS.WHITE,
-      divider: BASE_COLORS.LIGHT_GRAY,
+      primary: BRAND_COLORS.CRIMSON_LIGHT,
+      secondary: BRAND_COLORS.WHITE,
+      divider: BRAND_COLORS.SLATE_300,
     },
-    
-    // Form elements
+
     input: {
-      background: BASE_COLORS.DARK_ELEVATED,
-      text: BASE_COLORS.WHITE,
-      placeholder: BASE_COLORS.LIGHT_GRAY,
-      border: BASE_COLORS.DARK_BORDER,
-      focusBorder: BASE_COLORS.TEAL,
-      error: BASE_COLORS.ERROR_RED,
+      background: BRAND_COLORS.NAVY_LIGHT,
+      text: BRAND_COLORS.WHITE,
+      placeholder: BRAND_COLORS.SLATE_300,
+      border: BRAND_COLORS.SLATE_700,
+      focusBorder: BRAND_COLORS.SKY_BLUE,
+      error: BRAND_COLORS.ERROR,
     },
-    
-    // Stats elements
+
     stats: {
-      positive: BASE_COLORS.GREEN,
-      negative: BASE_COLORS.ERROR_RED,
-      neutral: BASE_COLORS.BLUE,
-      barBackground: BASE_COLORS.DARK_ELEVATED,
-      textPrimary: BASE_COLORS.WHITE,
-      textSecondary: BASE_COLORS.LIGHT_GRAY,
+      positive: BRAND_COLORS.SUCCESS,
+      negative: BRAND_COLORS.ERROR,
+      neutral: BRAND_COLORS.SKY_BLUE,
+      barBackground: BRAND_COLORS.NAVY_LIGHT,
+      textPrimary: BRAND_COLORS.WHITE,
+      textSecondary: BRAND_COLORS.SLATE_200,
     },
   },
-  
-  // Reuse the same spacing and border radius for consistency
+
   spacing: lightTheme.spacing,
   borderRadius: lightTheme.borderRadius,
-  
-  // Adjusted shadows for dark mode
+
   shadows: {
     none: {
       shadowColor: 'transparent',
@@ -369,180 +329,28 @@ export const darkTheme = {
     sm: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
+      shadowOpacity: 0.25,
       shadowRadius: 3,
       elevation: 2,
     },
     md: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.4,
-      shadowRadius: 4,
+      shadowOpacity: 0.35,
+      shadowRadius: 5,
       elevation: 3,
     },
     lg: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.5,
+      shadowOpacity: 0.45,
       shadowRadius: 8,
       elevation: 5,
     },
   },
 };
 
-// Type definition for the theme
-export type Theme = {
-  name: string;
-  colors: {
-    bg: {
-      primary: string;
-      secondary: string;
-      tertiary: string;
-      elevated: string;
-      dropDown: string;
-    };
-    surface: {
-      primary: string;
-      secondary: string;
-      elevated: string;
-      header: string;
-      sectionHeader: string;
-    };
-    interactive: {
-      primary: string;
-      secondary: string;
-      tertiary: string;
-      critical: string;
-      positive: string;
-      caution: string;
-      disabled: string;
-    };
-    text: {
-      primary: string;
-      secondary: string;
-      subtle: string;
-      inverse: string;
-      accent: string;
-      link: string;
-      disabled: string;
-    };
-    status: {
-      success: string;
-      error: string;
-      warning: string;
-      info: string;
-      live: string;
-      upcoming: string;
-      completed: string;
-    };
-    navigation: {
-      active: string;
-      inactive: string;
-      background: string;
-      border: string;
-    };
-    border: string;
-    card: {
-      background: string;
-      border: string;
-      shadow: string;
-      scoreHighlight: string;
-      headerBackground: string;
-    };
-    league: {
-      headerBackground: string;
-      itemBackground: string;
-    };
-    match: {
-      live: string;
-      upcoming: string;
-      completed: string;
-      homeTeamText: string;
-      awayTeamText: string;
-      scoreText: string;
-      timeText: string;
-    };
-    calendar: {
-      selectedDay: string;
-      selectedDayText: string;
-      normalDay: string;
-      normalDayText: string;
-      todayIndicator: string;
-      weekdayText: string;
-    };
-    pitch: {
-      background: string;
-      lines: string;
-      text: string;
-    };
-    score: {
-      primary: string;
-      secondary: string;
-      divider: string;
-    };
-    input: {
-      background: string;
-      text: string;
-      placeholder: string;
-      border: string;
-      focusBorder: string;
-      error: string;
-    };
-    stats: {
-      positive: string;
-      negative: string;
-      neutral: string;
-      barBackground: string;
-      textPrimary: string;
-      textSecondary: string;
-    };
-  };
-  spacing: {
-    xs: number;
-    sm: number;
-    md: number;
-    lg: number;
-    xl: number;
-    xxl: number;
-  };
-  borderRadius: {
-    sm: number;
-    md: number;
-    lg: number;
-    pill: number;
-  };
-  shadows: {
-    none: {
-      shadowColor: string;
-      shadowOffset: { width: number; height: number };
-      shadowOpacity: number;
-      shadowRadius: number;
-      elevation: number;
-    };
-    sm: {
-      shadowColor: string;
-      shadowOffset: { width: number; height: number };
-      shadowOpacity: number;
-      shadowRadius: number;
-      elevation: number;
-    };
-    md: {
-      shadowColor: string;
-      shadowOffset: { width: number; height: number };
-      shadowOpacity: number;
-      shadowRadius: number;
-      elevation: number;
-    };
-    lg: {
-      shadowColor: string;
-      shadowOffset: { width: number; height: number };
-      shadowOpacity: number;
-      shadowRadius: number;
-      elevation: number;
-    };
-  };
-};
-
+export type Theme = typeof lightTheme;
 export type ThemeName = 'light' | 'dark';
 
 export const themes = {
@@ -551,3 +359,5 @@ export const themes = {
 } as const;
 
 export const theme = lightTheme;
+
+export { BRAND_COLORS };
