@@ -401,7 +401,7 @@ export default function Index() {
           >
             <View style={styles.logoSection}>
               <Image
-                source={require('../assets/brand/horizontal-nobg.png')}
+                source={require('../assets/brand/horizontal-nobg-navy-writing.png')}
                 resizeMode="contain"
                 style={styles.logo}
               />
@@ -642,7 +642,7 @@ function SignedInHome({
       <ScrollView contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
         <View style={styles.homeHero}>
           <Image
-            source={require('../assets/brand/horizontal-nobg.png')}
+            source={require('../assets/brand/horizontal-nobg-navy-writing.png')}
             resizeMode="contain"
             style={styles.headerLogo}
           />
