@@ -1,9 +1,13 @@
 package dev.jordanvoss.pillarstrength.user;
 
 import dev.jordanvoss.pillarstrength.config.SecurityConfig;
-import dev.jordanvoss.pillarstrength.user.dto.MeResponse;
-import dev.jordanvoss.pillarstrength.user.dto.PreferencesDto;
-import dev.jordanvoss.pillarstrength.user.dto.UserDto;
+import dev.jordanvoss.pillarstrength.user.profile.dto.MeResponse;
+import dev.jordanvoss.pillarstrength.user.profile.dto.PreferencesDto;
+import dev.jordanvoss.pillarstrength.user.profile.dto.UserDto;
+import dev.jordanvoss.pillarstrength.user.profile.E1rmFormula;
+import dev.jordanvoss.pillarstrength.user.profile.Units;
+import dev.jordanvoss.pillarstrength.user.profile.UserController;
+import dev.jordanvoss.pillarstrength.user.profile.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -13,7 +17,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;

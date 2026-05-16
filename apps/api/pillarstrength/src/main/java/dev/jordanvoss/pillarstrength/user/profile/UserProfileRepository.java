@@ -1,4 +1,4 @@
-package dev.jordanvoss.pillarstrength.user;
+package dev.jordanvoss.pillarstrength.user.profile;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

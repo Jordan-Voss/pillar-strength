@@ -1,27 +1,124 @@
 import { supabase } from './supabase';
 
-const API = process.env.EXPO_PUBLIC_API_BASE_URL!;
+const API = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-export async function getMe() {
+if (!API) {
+  throw new Error('Missing EXPO_PUBLIC_API_BASE_URL');
+}
+
+export type MeResponse = {
+  user: {
+    id: string;
+    email: string;
+    username?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    displayName?: string | null;
+    onboardingComplete: boolean;
+  };
+  preferences: {
+    theme: string;
+    timezone: string;
+    units: string;
+    e1rmFormula: string;
+  };
+};
+
+export type UsernameAvailabilityResponse = {
+  username: string;
+  available: boolean;
+  reason: string;
+};
+
+export async function getMe(): Promise<MeResponse> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
 
-  console.log('token exists?', !!token);
-  console.log('token preview', token?.slice(0, 30));
-
   if (!token) {
-    throw new Error('Not signed in');
+    throw new Error('Not signed in.');
   }
 
-  const res = await fetch(`${API}/me`, {
+  const response = await fetchWithTimeout(`${API}/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed: ${res.status}`);
+  if (!response.ok) {
+    const message = await readErrorMessage(response);
+    throw new Error(message || `Failed to load profile. Status: ${response.status}`);
   }
 
-  return res.json();
+  return response.json();
+}
+
+export async function checkUsernameAvailability(
+  username: string,
+): Promise<UsernameAvailabilityResponse> {
+  const query = encodeURIComponent(username.trim());
+
+  const response = await fetchWithTimeout(
+    `${API}/auth/username-availability?username=${query}`,
+  );
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response);
+    throw new Error(message || 'Could not check username availability.');
+  }
+
+  return response.json();
+}
+
+export async function readErrorMessage(response: Response): Promise<string | null> {
+  try {
+    const body = await response.json();
+
+    if (typeof body?.message === 'string') {
+      return body.message;
+    }
+
+    if (typeof body?.error === 'string') {
+      return body.error;
+    }
+
+    return null;
+  } catch {
+    try {
+      const text = await response.text();
+      return text || null;
+    } catch {
+      return null;
+    }
+  }
+}
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 8000,
+): Promise<Response> {
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`Request timed out calling ${url}`);
+    }
+
+    if (error instanceof Error) {
+      throw new Error(`${error.message} calling ${url}`);
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }

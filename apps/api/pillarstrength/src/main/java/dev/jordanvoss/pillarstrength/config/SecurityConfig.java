@@ -21,7 +21,6 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    /** Dev profile: permit everything — no JWT required. */
     @Bean
     @Profile("dev")
     SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -30,14 +29,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/username-availability").permitAll()
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
     }
 
-    /** All other profiles: enforce JWT auth as normal. */
     @Bean
     @Profile("!dev")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,9 +55,9 @@ public class SecurityConfig {
                                 "/actuator/health/**",
                                 "/actuator/info"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/me").authenticated()
-                        .requestMatchers("/api/v1/favourites/**").authenticated()
-                        .requestMatchers("/api/v1/admin/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/username-availability").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

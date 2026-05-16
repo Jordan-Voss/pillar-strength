@@ -1,4 +1,4 @@
-package dev.jordanvoss.pillarstrength.user;
+package dev.jordanvoss.pillarstrength.user.profile;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,6 +15,12 @@ public class UserProfile {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(name = "display_name")
     private String displayName;
