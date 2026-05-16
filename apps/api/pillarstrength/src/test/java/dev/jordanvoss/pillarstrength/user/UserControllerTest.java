@@ -41,7 +41,7 @@ class UserControllerTest {
 
         when(userService.getOrCreateMe(any(Jwt.class)))
                 .thenReturn(new MeResponse(
-                        new UserDto(userId, "test@example.com", null, false),
+                        new UserDto(userId, "test@example.com","tESTtEST", "Test", "Tester", null, false),
                         new PreferencesDto("system", "Europe/Dublin", Units.METRIC, E1rmFormula.EPLEY)
                 ));
 
