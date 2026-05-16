@@ -17,6 +17,11 @@ const tabs = [
   },
 ] as const;
 
+const webGlassStyle = {
+  backdropFilter: 'blur(24px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+} as unknown as object;
+
 export default function AppTabs() {
   const pathname = usePathname();
 
@@ -25,7 +30,7 @@ export default function AppTabs() {
       <Slot />
 
       <View style={styles.floatingTabWrap}>
-        <View style={styles.tabBar}>
+        <View style={[styles.tabBar, webGlassStyle]}>
           {tabs.map((tab) => {
             const active = tab.activePaths.includes(pathname as never);
 
@@ -69,7 +74,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 14 },
     shadowOpacity: 0.16,
     shadowRadius: 28,
-    backdropFilter: 'blur(24px) saturate(180%)' as never,
   },
   tab: {
     color: theme.colors.navigation.inactive,
