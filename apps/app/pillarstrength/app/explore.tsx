@@ -1,12 +1,16 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { lightTheme as theme } from '@/theme/theme';
 
 export default function ExploreScreen() {
   return (
-    <SafeAreaView style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content}>
+    <View collapsable={false} style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        automaticallyAdjustContentInsets
+      >
         <View style={styles.header}>
           <Text style={styles.eyebrow}>Explore</Text>
           <Text style={styles.title}>Exercise Library</Text>
@@ -29,7 +33,7 @@ export default function ExploreScreen() {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -39,7 +43,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.bg.primary,
   },
   content: {
-    padding: theme.spacing.lg,
+    flexGrow: 1,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
     paddingBottom: theme.spacing.xxl,
     gap: theme.spacing.md,
   },

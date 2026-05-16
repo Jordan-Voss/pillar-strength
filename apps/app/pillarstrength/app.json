@@ -8,7 +8,7 @@
     "scheme": "pillarstrength",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/brand/icon.png",
+      "icon": "./assets/brand/app-icon.png",
       "bundleIdentifier": "com.jordanvoss.pillarstrength",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -25,7 +25,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/brand/web-splash.png"
+      "favicon": "./assets/brand/icon.png"
     },
     "plugins": [
       "expo-router",

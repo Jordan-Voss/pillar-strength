@@ -638,9 +638,14 @@ function SignedInHome({
   onClearSession: () => void;
 }) {
   return (
-    <SafeAreaView style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.homeHero}>
+      <View collapsable={false} style={styles.screen}>
+    <ScrollView
+      contentContainerStyle={styles.homeContent}
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+      automaticallyAdjustContentInsets
+    >
+      <View style={styles.homeHero}>
           <Image
             source={require('../assets/brand/horizontal-nobg-navy-writing.png')}
             resizeMode="contain"
@@ -727,7 +732,7 @@ function SignedInHome({
           {message ? <Text style={styles.errorText}>{message}</Text> : null}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -854,7 +859,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.lg,
-    paddingBottom: 110,
+    paddingBottom: theme.spacing.xxl,
     gap: theme.spacing.lg,
   },
   homeHero: {

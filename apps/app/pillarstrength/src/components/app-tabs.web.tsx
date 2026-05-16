@@ -12,7 +12,7 @@ const tabs = [
   },
   {
     href: '/explore',
-    label: 'Exercises',
+    label: 'Library',
     activePaths: ['/explore'],
   },
 ] as const;
@@ -21,10 +21,8 @@ export default function AppTabs() {
   const pathname = usePathname();
 
   return (
-    <View style={styles.shell}>
-      <View style={styles.content}>
-        <Slot />
-      </View>
+    <>
+      <Slot />
 
       <View style={styles.floatingTabWrap}>
         <View style={styles.tabBar}>
@@ -41,18 +39,11 @@ export default function AppTabs() {
           })}
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    backgroundColor: theme.colors.bg.primary,
-  },
-  content: {
-    flex: 1,
-  },
   floatingTabWrap: {
     position: 'fixed' as never,
     left: 0,
@@ -60,6 +51,7 @@ const styles = StyleSheet.create({
     bottom: 18,
     alignItems: 'center',
     pointerEvents: 'box-none' as never,
+    zIndex: 50,
   },
   tabBar: {
     minHeight: 58,
