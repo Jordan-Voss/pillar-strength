@@ -30,9 +30,8 @@ export type UsernameAvailabilityResponse = {
   reason: string;
 };
 
-export async function getMe(): Promise<MeResponse> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
+export async function getMe(accessToken?: string): Promise<MeResponse> {
+  const token = accessToken ?? (await getCurrentAccessToken());
 
   if (!token) {
     throw new Error('Not signed in.');
@@ -92,6 +91,16 @@ export async function readErrorMessage(response: Response): Promise<string | nul
   }
 }
 
+async function getCurrentAccessToken(): Promise<string | undefined> {
+  const sessionResult = await withTimeout(
+    supabase.auth.getSession(),
+    5000,
+    'Timed out reading Supabase session.',
+  );
+
+  return sessionResult.data.session?.access_token;
+}
+
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
@@ -120,5 +129,27 @@ async function fetchWithTimeout(
     throw error;
   } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string,
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(message));
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   }
 }

@@ -113,7 +113,7 @@ export default function Index() {
 
         if (data.session) {
           try {
-            const profile = await getMe();
+            const profile = await getMe(data.session.access_token);
 
             if (mounted) {
               setMe(profile);
@@ -143,13 +143,21 @@ export default function Index() {
 
     initialiseSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSessionEmail(session?.user.email ?? null);
 
-      if (session) {
+      if (!session) {
+        setMe(null);
+        setLoadingAction(null);
+        return;
+      }
+
+      const accessToken = session.access_token;
+
+      setTimeout(async () => {
         try {
           setLoadingAction('profile');
-          const profile = await getMe();
+          const profile = await getMe(accessToken);
           setMe(profile);
           setMessage(null);
         } catch (error) {
@@ -157,9 +165,7 @@ export default function Index() {
         } finally {
           setLoadingAction(null);
         }
-      } else {
-        setMe(null);
-      }
+      }, 0);
     });
 
     return () => {
@@ -321,15 +327,19 @@ export default function Index() {
     setLoadingAction('signout');
 
     try {
-      await signOutCurrentUser();
+      await Promise.race([
+        signOutCurrentUser(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Sign out timed out. Cleared local state.')), 5000),
+        ),
+      ]);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not sign out.');
+    } finally {
       setSessionEmail(null);
       setMe(null);
       setPassword('');
       setConfirmPassword('');
-      setMessage(null);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Could not sign out.');
-    } finally {
       setLoadingAction(null);
     }
   }
@@ -338,15 +348,20 @@ export default function Index() {
     setLoadingAction('signout');
 
     try {
-      await supabase.auth.signOut({ scope: 'local' });
+      await Promise.race([
+        supabase.auth.signOut({ scope: 'local' }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Clear local session timed out.')), 5000),
+        ),
+      ]);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not clear session.');
+    } finally {
       setSessionEmail(null);
       setMe(null);
       setPassword('');
       setConfirmPassword('');
       setMessage(null);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Could not clear session.');
-    } finally {
       setLoadingAction(null);
     }
   }
@@ -638,14 +653,14 @@ function SignedInHome({
   onClearSession: () => void;
 }) {
   return (
-      <View collapsable={false} style={styles.screen}>
-    <ScrollView
-      contentContainerStyle={styles.homeContent}
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-      automaticallyAdjustContentInsets
-    >
-      <View style={styles.homeHero}>
+    <View collapsable={false} style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={styles.homeContent}
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        automaticallyAdjustContentInsets
+      >
+        <View style={styles.homeHero}>
           <Image
             source={require('../assets/brand/horizontal-nobg-navy-writing.png')}
             resizeMode="contain"
@@ -660,13 +675,13 @@ function SignedInHome({
         <View style={styles.heroActionCard}>
           <Text style={styles.heroActionTitle}>Ready to train?</Text>
           <Text style={styles.heroActionSubtitle}>
-            The Exercise tab is ready for the next feature slice: seeded lifts, search, and details.
+            The Library tab is ready for the next feature slice: seeded lifts, search, and details.
           </Text>
         </View>
 
         <View style={styles.quickGrid}>
           <HomeActionCard title="Programs" subtitle="Coming soon" />
-          <HomeActionCard title="Exercises" subtitle="Use the tab below" />
+          <HomeActionCard title="Library" subtitle="Use the tab below" />
           <HomeActionCard title="Profile" subtitle="Account details below" />
           <HomeActionCard
             title="Preferences"

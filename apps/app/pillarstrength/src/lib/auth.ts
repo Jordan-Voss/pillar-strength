@@ -121,12 +121,38 @@ export async function createAccount({
 }
 
 export async function signOutCurrentUser(): Promise<void> {
-  const { error } = await supabase.auth.signOut();
+    const { error } = await withTimeout(
+        supabase.auth.signOut(),
+        5000,
+        'Sign out timed out.',
+    );
 
-  if (error) {
-    throw new Error(error.message);
-  }
-}
+    if (error) {
+        throw new Error(error.message);
+    }
+    }
+
+    async function withTimeout<T>(
+    promise: Promise<T>,
+    timeoutMs: number,
+    message: string,
+    ): Promise<T> {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+        reject(new Error(message));
+        }, timeoutMs);
+    });
+
+    try {
+        return await Promise.race([promise, timeoutPromise]);
+    } finally {
+        if (timeoutId) {
+        clearTimeout(timeoutId);
+        }
+    }
+    }
 
 function validateUsername(username: string): void {
   if (!USERNAME_REGEX.test(username)) {
