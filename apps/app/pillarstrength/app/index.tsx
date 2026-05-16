@@ -28,7 +28,7 @@ import {
   signOutCurrentUser,
 } from '../src/lib/auth';
 import { supabase } from '../src/lib/supabase';
-import { darkTheme as theme } from '../src/theme/theme';
+import { lightTheme as theme } from '../src/theme/theme';
 
 type AuthMode = 'signIn' | 'signUp';
 type UsernameCheckState = 'idle' | 'invalid' | 'checking' | 'available' | 'taken' | 'error';
@@ -387,7 +387,7 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={styles.authScreen}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -639,11 +639,8 @@ function SignedInHome({
 }) {
   return (
     <SafeAreaView style={styles.screen}>
-      <ScrollView
-        contentContainerStyle={styles.homeContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.homeHeader}>
+      <ScrollView contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.homeHero}>
           <Image
             source={require('../assets/brand/horizontal-nobg.png')}
             resizeMode="contain"
@@ -651,15 +648,25 @@ function SignedInHome({
           />
           <Text style={styles.homeGreeting}>Welcome, {appDisplayName}</Text>
           <Text style={styles.homeSubtitle}>
-            Your training dashboard is taking shape.
+            Build strength with structured programs, exercise tracking, and progress insights.
+          </Text>
+        </View>
+
+        <View style={styles.heroActionCard}>
+          <Text style={styles.heroActionTitle}>Ready to train?</Text>
+          <Text style={styles.heroActionSubtitle}>
+            The Exercise tab is ready for the next feature slice: seeded lifts, search, and details.
           </Text>
         </View>
 
         <View style={styles.quickGrid}>
-          <HomeActionCard title="Start workout" subtitle="Coming next" />
-          <HomeActionCard title="Programs" subtitle="Build templates" />
-          <HomeActionCard title="Exercise library" subtitle="Browse lifts" />
-          <HomeActionCard title="Profile" subtitle="Account settings" />
+          <HomeActionCard title="Programs" subtitle="Coming soon" />
+          <HomeActionCard title="Exercises" subtitle="Use the tab below" />
+          <HomeActionCard title="Profile" subtitle="Account details below" />
+          <HomeActionCard
+            title="Preferences"
+            subtitle={`${me?.preferences?.units ?? 'Units'} · ${me?.preferences?.e1rmFormula ?? 'e1RM'}`}
+          />
         </View>
 
         <View style={styles.card}>
@@ -674,14 +681,8 @@ function SignedInHome({
               label="Onboarding"
               value={me?.user?.onboardingComplete ? 'Complete' : 'Not started'}
             />
-            <SummaryRow
-    label="Timezone"
-    value={me?.preferences?.timezone ?? 'Not set yet'}
-              />
-              <SummaryRow
-    label="Theme"
-    value={me?.preferences?.theme ?? 'Not set yet'}
-              />
+            <SummaryRow label="Timezone" value={me?.preferences?.timezone ?? 'Not set yet'} />
+            <SummaryRow label="Theme" value={me?.preferences?.theme ?? 'Not set yet'} />
             <SummaryRow label="Units" value={me?.preferences?.units ?? 'Not loaded'} />
             <SummaryRow
               label="e1RM formula"
@@ -823,6 +824,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.bg.primary,
   },
+  authScreen: {
+    flex: 1,
+    backgroundColor: theme.colors.bg.primary,
+  },
   keyboardAvoidingView: {
     flex: 1,
   },
@@ -849,11 +854,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.lg,
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: 110,
     gap: theme.spacing.lg,
   },
-  homeHeader: {
-    gap: theme.spacing.xs,
+  homeHero: {
+    backgroundColor: theme.colors.card.background,
+    borderColor: theme.colors.card.border,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    gap: theme.spacing.sm,
+    ...theme.shadows.md,
   },
   homeGreeting: {
     color: theme.colors.text.primary,
@@ -866,8 +877,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   headerLogo: {
-    width: 240,
-    height: 76,
+    width: 220,
+    height: 70,
   },
   logoSection: {
     alignItems: 'center',
@@ -889,11 +900,26 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.lg,
     gap: theme.spacing.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
-    elevation: 8,
+    ...theme.shadows.md,
+  },
+  heroActionCard: {
+    backgroundColor: theme.colors.surface.header,
+    borderColor: theme.colors.card.border,
+    borderWidth: 1,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    gap: theme.spacing.md,
+    ...theme.shadows.md,
+  },
+  heroActionTitle: {
+    color: theme.colors.text.primary,
+    fontSize: 22,
+    fontWeight: '800',
+  },
+  heroActionSubtitle: {
+    color: theme.colors.text.secondary,
+    fontSize: 15,
+    lineHeight: 22,
   },
   quickGrid: {
     flexDirection: 'row',
@@ -909,6 +935,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.md,
     justifyContent: 'space-between',
+    ...theme.shadows.sm,
   },
   actionTitle: {
     color: theme.colors.text.primary,

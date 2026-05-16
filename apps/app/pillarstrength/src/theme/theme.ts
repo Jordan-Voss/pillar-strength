@@ -1,7 +1,4 @@
-// src/theme/theme.ts
-
 const BRAND_COLORS = {
-  // Core brand
   NAVY: '#0E1D3D',
   NAVY_ELEVATED: '#13264D',
   NAVY_LIGHT: '#1B3566',
@@ -30,7 +27,7 @@ const BRAND_COLORS = {
   SUCCESS: '#2ECC71',
   WARNING: '#F39C12',
   ERROR: '#E74C3C',
-};
+} as const;
 
 export const lightTheme = {
   name: 'light',
@@ -54,6 +51,7 @@ export const lightTheme = {
 
     interactive: {
       primary: BRAND_COLORS.CRIMSON,
+      primaryPressed: BRAND_COLORS.CRIMSON_DARK,
       secondary: BRAND_COLORS.SKY_BLUE,
       tertiary: BRAND_COLORS.NAVY_LIGHT,
       critical: BRAND_COLORS.CRIMSON,
@@ -86,6 +84,7 @@ export const lightTheme = {
       active: BRAND_COLORS.CRIMSON,
       inactive: BRAND_COLORS.SLATE_400,
       background: BRAND_COLORS.WHITE,
+      selectedBackground: BRAND_COLORS.LIGHT_SURFACE,
       border: BRAND_COLORS.SLATE_100,
     },
 
@@ -196,7 +195,7 @@ export const lightTheme = {
       elevation: 4,
     },
   },
-};
+} as const;
 
 export const darkTheme = {
   name: 'dark',
@@ -220,6 +219,7 @@ export const darkTheme = {
 
     interactive: {
       primary: BRAND_COLORS.CRIMSON,
+      primaryPressed: BRAND_COLORS.CRIMSON_DARK,
       secondary: BRAND_COLORS.SKY_BLUE,
       tertiary: BRAND_COLORS.SKY_BLUE_BRIGHT,
       critical: BRAND_COLORS.CRIMSON,
@@ -249,9 +249,10 @@ export const darkTheme = {
     },
 
     navigation: {
-      active: BRAND_COLORS.CRIMSON,
+      active: BRAND_COLORS.CRIMSON_LIGHT,
       inactive: BRAND_COLORS.SLATE_300,
       background: BRAND_COLORS.NAVY_ELEVATED,
+      selectedBackground: BRAND_COLORS.NAVY_LIGHT,
       border: BRAND_COLORS.SLATE_700,
     },
 
@@ -348,15 +349,15 @@ export const darkTheme = {
       elevation: 5,
     },
   },
-};
-
-export type Theme = typeof lightTheme;
-export type ThemeName = 'light' | 'dark';
+} as const;
 
 export const themes = {
   light: lightTheme,
   dark: darkTheme,
 } as const;
+
+export type ThemeName = keyof typeof themes;
+export type Theme = (typeof themes)[ThemeName];
 
 export const theme = lightTheme;
 
