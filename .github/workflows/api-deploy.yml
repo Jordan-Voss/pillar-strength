@@ -163,7 +163,8 @@ jobs:
                   SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
                   CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
                   EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-                  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}                restart: always
+                  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+                  restart: always
 
               caddy:
                 container_name: pillarstrength-caddy
