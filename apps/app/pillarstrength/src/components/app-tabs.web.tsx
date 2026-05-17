@@ -1,6 +1,6 @@
-import { Link, Slot, usePathname } from 'expo-router';
+import { Slot, router, usePathname } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { lightTheme as theme } from '@/theme/theme';
 
@@ -32,11 +32,19 @@ export default function AppTabs() {
             const active = tab.activePaths.includes(pathname as never);
 
             return (
-              <Link key={tab.href} href={tab.href} asChild>
-                <Text style={[styles.navItem, active && styles.navItemActive]}>
+              <Pressable
+                key={tab.href}
+                onPress={() => router.push(tab.href)}
+                style={({ pressed }) => [
+                  styles.navItem,
+                  active && styles.navItemActive,
+                  pressed && styles.navItemPressed,
+                ]}
+              >
+                <Text style={[styles.navItemText, active && styles.navItemTextActive]}>
                   {tab.label}
                 </Text>
-              </Link>
+              </Pressable>
             );
           })}
         </View>
@@ -49,6 +57,11 @@ export default function AppTabs() {
   );
 }
 
+const webHeaderGlassStyle = {
+  backdropFilter: 'blur(18px) saturate(160%)',
+  WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+} as unknown as object;
+
 const styles = StyleSheet.create({
   shell: {
     flex: 1,
@@ -57,6 +70,9 @@ const styles = StyleSheet.create({
   },
   webHeader: {
     height: 72,
+    position: 'sticky' as never,
+    top: 0,
+    zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -64,11 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.88)',
     borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    position: 'sticky' as never,
-    top: 0,
-    zIndex: 10,
-    backdropFilter: 'blur(18px) saturate(160%)' as never,
-    WebkitBackdropFilter: 'blur(18px) saturate(160%)' as never,
+    ...webHeaderGlassStyle,
   } as never,
   brand: {
     flexDirection: 'row',
@@ -85,18 +97,23 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
   },
   navItem: {
-    color: theme.colors.text.secondary,
-    fontSize: 14,
-    fontWeight: '800',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.pill,
-    overflow: 'hidden',
-    cursor: 'pointer' as never,
   },
   navItemActive: {
-    color: theme.colors.navigation.active,
     backgroundColor: 'rgba(215, 38, 61, 0.10)',
+  },
+  navItemPressed: {
+    opacity: 0.8,
+  },
+  navItemText: {
+    color: theme.colors.text.secondary,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  navItemTextActive: {
+    color: theme.colors.navigation.active,
   },
   content: {
     flex: 1,
