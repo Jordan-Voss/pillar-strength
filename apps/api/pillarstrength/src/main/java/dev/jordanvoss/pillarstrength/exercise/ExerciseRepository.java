@@ -1,4 +1,19 @@
 package dev.jordanvoss.pillarstrength.exercise;
 
-public class ExerciseRepository {
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
+
+    @EntityGraph(attributePaths = {"exerciseMuscles", "exerciseMuscles.muscle"})
+    List<Exercise> findAllByOrderByNameAsc();
+
+    @EntityGraph(attributePaths = {"exerciseMuscles", "exerciseMuscles.muscle"})
+    List<Exercise> findByNameContainingIgnoreCaseOrSlugContainingIgnoreCaseOrderByNameAsc(
+            String name,
+            String slug
+    );
 }

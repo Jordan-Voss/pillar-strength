@@ -1,4 +1,7 @@
 package dev.jordanvoss.pillarstrength.exercise;
 
-public class ExerciseMuscleRole {
+public enum ExerciseMuscleRole {
+    PRIMARY,
+    SECONDARY,
+    SUPPORTING
 }
