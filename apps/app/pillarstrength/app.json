@@ -8,7 +8,7 @@
     "scheme": "pillarstrength",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/brand/app-icon.png",
+      "icon": "./assets/brand/icon.png",
       "bundleIdentifier": "com.jordanvoss.pillarstrength",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

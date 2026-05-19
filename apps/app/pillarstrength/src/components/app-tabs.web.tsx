@@ -11,9 +11,19 @@ const tabs = [
     activePaths: ['/', '/index'],
   },
   {
-    href: '/explore',
-    label: 'Library',
-    activePaths: ['/explore'],
+    href: '/train',
+    label: 'Train',
+    activePaths: ['/train'],
+  },
+  {
+    href: '/programs',
+    label: 'Programs',
+    activePaths: ['/programs'],
+  },
+  {
+    href: '/profile',
+    label: 'Profile',
+    activePaths: ['/profile'],
   },
 ] as const;
 
@@ -29,7 +39,9 @@ export default function AppTabs() {
 
         <View style={styles.nav}>
           {tabs.map((tab) => {
-            const active = tab.activePaths.includes(pathname as never);
+            const active = tab.activePaths.some((path) =>
+              path === '/' ? pathname === '/' : pathname.startsWith(path),
+            );
 
             return (
               <Pressable

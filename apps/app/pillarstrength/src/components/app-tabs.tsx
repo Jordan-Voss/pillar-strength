@@ -20,11 +20,18 @@ const inactiveColor = isIOS
     })
   : theme.colors.navigation.inactive;
 
+const indicatorColor = isIOS
+  ? DynamicColorIOS({
+      light: 'rgba(14, 29, 61, 0.08)',
+      dark: 'rgba(255,255,255,0.18)',
+    })
+  : theme.colors.bg.tertiary;
+
 export default function AppTabs() {
   return (
     <NativeTabs
       backgroundColor={isIOS ? 'transparent' : theme.colors.navigation.background}
-      indicatorColor={isIOS ? 'rgba(215, 38, 61, 0.12)' : theme.colors.bg.tertiary}
+      indicatorColor={indicatorColor}
       tintColor={selectedColor}
       labelStyle={{
         color: inactiveColor,
@@ -35,18 +42,22 @@ export default function AppTabs() {
     >
       <NativeTabs.Trigger name="index" disableTransparentOnScrollEdge={false}>
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
+        <NativeTabs.Trigger.Icon sf="house" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore" disableTransparentOnScrollEdge={false}>
-        <NativeTabs.Trigger.Label>Library</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
+      <NativeTabs.Trigger name="train" disableTransparentOnScrollEdge={false}>
+        <NativeTabs.Trigger.Label>Train</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="figure.strengthtraining.traditional" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="programs" disableTransparentOnScrollEdge={false}>
+        <NativeTabs.Trigger.Label>Programs</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="calendar" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="profile" disableTransparentOnScrollEdge={false}>
+        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="person.crop.circle" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

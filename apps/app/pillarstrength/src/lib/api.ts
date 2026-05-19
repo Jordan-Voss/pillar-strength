@@ -30,6 +30,32 @@ export type UsernameAvailabilityResponse = {
   reason: string;
 };
 
+export type MuscleRole = 'PRIMARY' | 'SECONDARY' | 'SUPPORTING';
+
+export type MuscleResponse = {
+  id: string;
+  code: string;
+  name: string;
+  muscleGroup: string;
+  bodyRegion: string;
+  diagramRegionKey: string;
+  role: MuscleRole;
+};
+
+export type ExerciseResponse = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  exerciseFamily: string;
+  movementPattern: string;
+  equipment: string;
+  bodyweight: boolean;
+  unilateral: boolean;
+  muscles: MuscleResponse[];
+};
+
+
 export async function getMe(accessToken?: string): Promise<MeResponse> {
   const token = accessToken ?? (await getCurrentAccessToken());
 
@@ -152,4 +178,20 @@ async function withTimeout<T>(
       clearTimeout(timeoutId);
     }
   }
+}
+
+export async function getExercises(query = ''): Promise<ExerciseResponse[]> {
+  const trimmedQuery = query.trim();
+  const url = trimmedQuery
+    ? `${API}/exercises?q=${encodeURIComponent(trimmedQuery)}`
+    : `${API}/exercises`;
+
+  const response = await fetchWithTimeout(url);
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response);
+    throw new Error(message || `Failed to load exercises. Status: ${response.status}`);
+  }
+
+  return response.json();
 }
