@@ -195,3 +195,14 @@ export async function getExercises(query = ''): Promise<ExerciseResponse[]> {
 
   return response.json();
 }
+
+export async function getExercise(id: string): Promise<ExerciseResponse> {
+  const response = await fetchWithTimeout(`${API}/exercises/${encodeURIComponent(id)}`);
+
+  if (!response.ok) {
+    const message = await readErrorMessage(response);
+    throw new Error(message || `Failed to load exercise. Status: ${response.status}`);
+  }
+
+  return response.json();
+}

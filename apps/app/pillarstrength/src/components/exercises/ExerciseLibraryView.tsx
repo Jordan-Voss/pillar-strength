@@ -24,7 +24,21 @@ import {
 import { getExercises, type ExerciseResponse } from '@/lib/api';
 import { lightTheme as theme } from '@/theme/theme';
 
-export default function ExercisesScreen() {
+export type ExerciseLibraryMode = 'browse' | 'select';
+
+export function ExerciseLibraryView({
+  title = 'Browse exercises',
+  subtitle = 'Search movements, muscles, equipment, and training patterns.',
+  mode = 'browse',
+  onSelectExercise,
+  onBack,
+}: {
+  title?: string;
+  subtitle?: string;
+  mode?: ExerciseLibraryMode;
+  onSelectExercise: (exercise: ExerciseResponse) => void;
+  onBack?: () => void;
+}) {
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [exercises, setExercises] = useState<ExerciseResponse[]>([]);
@@ -86,12 +100,18 @@ export default function ExercisesScreen() {
             contentInsetAdjustmentBehavior="automatic"
             automaticallyAdjustContentInsets
           >
+            {onBack ? (
+              <Pressable style={styles.backButton} onPress={onBack}>
+                <Text style={styles.backButtonText}>← Back</Text>
+              </Pressable>
+            ) : null}
+
             <View style={styles.header}>
-              <Text style={styles.eyebrow}>Exercise Library</Text>
-              <Text style={styles.title}>Browse exercises</Text>
-              <Text style={styles.subtitle}>
-                Search movements, muscles, equipment, and training patterns.
+              <Text style={styles.eyebrow}>
+                {mode === 'select' ? 'Select Exercise' : 'Exercise Library'}
               </Text>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
 
             <ExerciseSearchPanel
@@ -133,7 +153,12 @@ export default function ExercisesScreen() {
             {!loading && !message && filteredExercises.length > 0 ? (
               <View style={styles.exerciseList}>
                 {filteredExercises.map((exercise) => (
-                  <ExerciseRow key={exercise.id} exercise={exercise} />
+                  <ExerciseRow
+                    key={exercise.id}
+                    exercise={exercise}
+                    actionLabel={mode === 'select' ? 'Select' : undefined}
+                    onPress={() => onSelectExercise(exercise)}
+                  />
                 ))}
               </View>
             ) : null}
@@ -158,6 +183,15 @@ const styles = StyleSheet.create({
     paddingTop: theme.spacing.lg,
     paddingBottom: 140,
     gap: theme.spacing.lg,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: theme.spacing.sm,
+  },
+  backButtonText: {
+    color: theme.colors.text.link,
+    fontSize: 15,
+    fontWeight: '900',
   },
   header: {
     gap: theme.spacing.xs,

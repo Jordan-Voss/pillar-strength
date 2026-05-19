@@ -21,49 +21,33 @@ export default function HomeScreen() {
       >
         <View style={styles.hero}>
           <Image
-            source={require('../assets/brand/horizontal-nobg-navy-writing.png')}
+            source={require('../../assets/brand/horizontal-nobg-navy-writing.png')}
             resizeMode="contain"
             style={styles.logo}
           />
-          <Text style={styles.title}>Welcome back</Text>
+          <Text style={styles.title}>Today</Text>
           <Text style={styles.subtitle}>
-            Build strength with structured programs, clear workout logging, and useful progress insights.
+            Your current program, next workout, and recent training will appear here.
           </Text>
         </View>
 
         <View style={styles.primaryCard}>
-          <Text style={styles.cardEyebrow}>Today</Text>
-          <Text style={styles.cardTitle}>No workout scheduled yet</Text>
+          <Text style={styles.cardEyebrow}>Next workout</Text>
+          <Text style={styles.cardTitle}>No active program yet</Text>
           <Text style={styles.cardText}>
-            Program scheduling will appear here once the program builder is ready.
+            Choose a template or create your own program to see what to train next.
           </Text>
 
           <Pressable style={styles.primaryButton} onPress={() => router.push('/programs')}>
-            <Text style={styles.primaryButtonText}>Go to Programs</Text>
+            <Text style={styles.primaryButtonText}>Browse Programs</Text>
           </Pressable>
         </View>
 
         <View style={styles.quickGrid}>
-          <QuickAction
-            title="Train"
-            subtitle="Start or resume a workout"
-            onPress={() => router.push('/train')}
-          />
-          <QuickAction
-            title="Programs"
-            subtitle="Build structured training"
-            onPress={() => router.push('/programs')}
-          />
-          <QuickAction
-            title="Exercise Library"
-            subtitle="Browse movements"
-            onPress={() => router.push('/exercises')}
-          />
-          <QuickAction
-            title="Profile"
-            subtitle="Account and settings"
-            onPress={() => router.push('/profile')}
-          />
+          <QuickAction title="Log workout" subtitle="Planned or blank session" onPress={() => router.push('/log')} />
+          <QuickAction title="Programs" subtitle="Templates and custom plans" onPress={() => router.push('/programs')} />
+          <QuickAction title="Exercises" subtitle="Browse movement library" onPress={() => router.push('/exercises')} />
+          <QuickAction title="Progress" subtitle="History and stats" onPress={() => router.push('/progress')} />
         </View>
       </ScrollView>
     </View>

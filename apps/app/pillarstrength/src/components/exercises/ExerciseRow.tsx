@@ -6,7 +6,15 @@ import {
 } from '@/lib/api';
 import { lightTheme as theme } from '@/theme/theme';
 
-export function ExerciseRow({ exercise }: { exercise: ExerciseResponse }) {
+export function ExerciseRow({
+  exercise,
+  actionLabel,
+  onPress,
+}: {
+  exercise: ExerciseResponse;
+  actionLabel?: string;
+  onPress?: () => void;
+}) {
   const primaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'PRIMARY');
   const secondaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'SECONDARY');
 
@@ -15,8 +23,16 @@ export function ExerciseRow({ exercise }: { exercise: ExerciseResponse }) {
   ).length;
 
   return (
-    <Pressable style={({ pressed }) => [styles.exerciseRow, pressed && styles.pressed]}>
+<Pressable
+  style={({ pressed }) => [styles.exerciseRow, pressed && styles.pressed]}
+  onPress={onPress}
+>
       <View style={styles.exerciseTopRow}>
+        {actionLabel ? (
+  <View style={styles.actionPill}>
+    <Text style={styles.actionPillText}>{actionLabel}</Text>
+  </View>
+) : null}
         <View style={styles.exerciseTitleBlock}>
           <Text style={styles.exerciseName}>{exercise.name}</Text>
           <Text style={styles.exerciseMeta}>
@@ -215,4 +231,15 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.82,
   },
+  actionPill: {
+  borderRadius: theme.borderRadius.pill,
+  backgroundColor: 'rgba(215, 38, 61, 0.10)',
+  paddingHorizontal: theme.spacing.sm,
+  paddingVertical: 5,
+},
+actionPillText: {
+  color: theme.colors.interactive.primary,
+  fontSize: 11,
+  fontWeight: '900',
+},
 });

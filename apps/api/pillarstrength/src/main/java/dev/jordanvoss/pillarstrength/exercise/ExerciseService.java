@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ExerciseService {
@@ -29,5 +30,13 @@ public class ExerciseService {
         return exercises.stream()
                 .map(ExerciseResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ExerciseResponse getExercise(UUID id) {
+        Exercise exercise = exerciseRepository.findById(id)
+                .orElseThrow(() -> new ExerciseNotFoundException(id));
+
+        return ExerciseResponse.from(exercise);
     }
 }

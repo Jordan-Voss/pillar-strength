@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { lightTheme as theme } from '@/theme/theme';
 
-export default function TrainScreen() {
+export default function ProgramsScreen() {
   return (
     <View collapsable={false} style={styles.screen}>
       <ScrollView
@@ -13,27 +13,29 @@ export default function TrainScreen() {
         automaticallyAdjustContentInsets
       >
         <View style={styles.header}>
-          <Text style={styles.eyebrow}>Train</Text>
-          <Text style={styles.title}>Workout logging</Text>
+          <Text style={styles.eyebrow}>Programs</Text>
+          <Text style={styles.title}>Programs and templates</Text>
           <Text style={styles.subtitle}>
-            This is where active workouts, set logging, rest timers, and exercise selection will live.
+            Choose a template or create your own program. This is an internal setup screen, not a main tab.
           </Text>
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Start workout</Text>
+          <Text style={styles.cardTitle}>Program templates</Text>
           <Text style={styles.cardText}>
-            Next we’ll add blank sessions and exercise selection from the shared Exercise Library.
+            Seeded templates will be added next: strength, powerlifting, rugby, and upper/lower.
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Exercise Library</Text>
+          <Text style={styles.cardText}>
+            Browse exercises before adding them to templates and custom programs.
           </Text>
 
           <Pressable style={styles.primaryButton} onPress={() => router.push('/exercises')}>
-            <Text style={styles.primaryButtonText}>Browse Exercise Library</Text>
+            <Text style={styles.primaryButtonText}>Browse Exercises</Text>
           </Pressable>
-        </View>
-
-        <View style={styles.cardMuted}>
-          <Text style={styles.cardTitle}>Coming next</Text>
-          <Text style={styles.cardText}>Active workout screen, add exercise, log sets, RPE, and session notes.</Text>
         </View>
       </ScrollView>
     </View>
@@ -80,16 +82,6 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
     gap: theme.spacing.md,
     ...theme.shadows.md,
-  },
-  cardMuted: {
-    backgroundColor: theme.colors.card.background,
-    borderColor: theme.colors.card.border,
-    borderWidth: 1,
-    borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing.lg,
-    gap: theme.spacing.md,
-    opacity: 0.78,
-    ...theme.shadows.sm,
   },
   cardTitle: {
     color: theme.colors.text.primary,

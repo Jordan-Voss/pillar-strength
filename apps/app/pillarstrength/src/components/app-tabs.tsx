@@ -45,20 +45,23 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon sf="house" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="train" disableTransparentOnScrollEdge={false}>
-        <NativeTabs.Trigger.Label>Train</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="figure.strengthtraining.traditional" />
+      <NativeTabs.Trigger name="log" disableTransparentOnScrollEdge={false}>
+        <NativeTabs.Trigger.Label>Log</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="plus.circle" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="programs" disableTransparentOnScrollEdge={false}>
-        <NativeTabs.Trigger.Label>Programs</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="calendar" />
+      <NativeTabs.Trigger name="progress" disableTransparentOnScrollEdge={false}>
+        <NativeTabs.Trigger.Label>Progress</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="chart.line.uptrend.xyaxis" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile" disableTransparentOnScrollEdge={false}>
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.crop.circle" />
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="home/exercises" hidden />
+      <NativeTabs.Trigger name="programs" hidden />
     </NativeTabs>
   );
 }

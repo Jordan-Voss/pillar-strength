@@ -11,14 +11,14 @@ const tabs = [
     activePaths: ['/', '/index'],
   },
   {
-    href: '/train',
-    label: 'Train',
-    activePaths: ['/train'],
+    href: '/log',
+    label: 'Log',
+    activePaths: ['/log'],
   },
   {
-    href: '/programs',
-    label: 'Programs',
-    activePaths: ['/programs'],
+    href: '/progress',
+    label: 'Progress',
+    activePaths: ['/progress'],
   },
   {
     href: '/profile',
@@ -33,9 +33,7 @@ export default function AppTabs() {
   return (
     <View style={styles.shell}>
       <View style={styles.webHeader}>
-        <View style={styles.brand}>
-          <Text style={styles.brandText}>Pillar Strength</Text>
-        </View>
+        <Text style={styles.brandText}>Pillar Strength</Text>
 
         <View style={styles.nav}>
           {tabs.map((tab) => {
@@ -94,10 +92,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     ...webHeaderGlassStyle,
   } as never,
-  brand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   brandText: {
     color: theme.colors.text.primary,
     fontSize: 18,
