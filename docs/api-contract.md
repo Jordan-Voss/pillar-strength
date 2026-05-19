@@ -1,185 +1,169 @@
-# API Contract (MVP)
+# API Contract
 
-All endpoints are versioned under `/v1`.
+All API endpoints are versioned under:
 
-All endpoints require authentication (Supabase JWT), as training data is user-owned.
+```txt
+/api/v1
+```
+
+Most endpoints require Supabase JWT authentication.
 
 ---
 
-## Templates
+## Auth
 
-### GET /v1/templates
-Returns templates and their day structures.
+### POST `/api/v1/auth/login`
 
-#### Response:
-```json
-{
-  "templates": [
-    {
-      "id": "uuid",
-      "name": "Powerlifting 3-Day",
-      "goal": "strength",
-      "daysPerWeek": 3,
-      "days": [
-        {
-          "name": "Day 1",
-          "exercises": [
-            {
-              "exerciseKey": "SQUAT",
-              "displayName": "Back Squat",
-              "scheme": {
-                "type": "TOP_SET_RPE_BACKOFF",
-                "topSet": { "reps": 1, "rpe": 8 },
-                "backoffs": { "sets": 4, "reps": 3, "percentageOfTopSet": 85 }
-              },
-              "notes": "Rest 3–5 minutes."
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
+Allows login by email or username.
+
+### GET `/api/v1/auth/username-availability`
+
+Checks username availability.
+
+---
+
+## User
+
+### GET `/api/v1/me`
+
+Returns the current authenticated user's app profile and preferences.
+
+---
+
+## Exercises
+
+### GET `/api/v1/exercises`
+
+Returns exercise list.
+
+Query params:
+
+- `q` optional search term
+
+### GET `/api/v1/exercises/{id}`
+
+Planned next.
+
+Returns exercise detail, including metadata and muscles.
+
+---
+
+## Program Templates
+
+### GET `/api/v1/program-templates`
+
+Planned.
+
+Returns program template summaries.
+
+### GET `/api/v1/program-templates/{id}`
+
+Planned.
+
+Returns template detail including days and exercises.
+
+---
+
 ## Programs
-### POST /v1/programs
 
-Creates a program instance.
+### POST `/api/v1/programs/from-template`
 
-#### Request (from template):
-```json
-{ "templateId": "uuid", "startDate": "2026-01-05" }
-```
-#### Response (Custom Program):
-```json
-{
-  "name": "My 4-Day Upper/Lower",
-  "startDate": "2026-01-05",
-  "days": [
-    {
-      "name": "Upper A",
-      "exercises": [
-        {
-          "exerciseKey": "BENCH_PRESS",
-          "displayName": "Bench Press",
-          "scheme": { "type": "STRAIGHT_SETS", "sets": 4, "reps": 6 },
-          "notes": "Keep 1–2 reps in reserve."
-        }
-      ]
-    }
-  ]
-}
+Planned.
 
-```
+Creates a user-owned program from a template.
+
+### GET `/api/v1/programs/current`
+
+Planned.
+
+Returns current active program.
+
+### POST `/api/v1/programs`
+
+Planned.
+
+Creates a custom program.
+
+### PATCH `/api/v1/programs/{id}`
+
+Planned.
+
+Updates a user-owned program.
+
 ---
-### GET /v1/programs/current
-Returns current program instance.
----
+
 ## Schedule
 
-### GET /v1/schedule?from=YYYY-MM-DD&to=YYYY-MM-DD
+### GET `/api/v1/schedule?from&to`
 
-Returns planned days and completion status.
+Planned.
 
-#### Response:
-```json
-{
-  "from": "2026-01-05",
-  "to": "2026-01-18",
-  "days": [
-    {
-      "date": "2026-01-06",
-      "programDayId": "uuid",
-      "name": "Day 1",
-      "status": "PLANNED",
-      "completedSessionId": null
-    }
-  ]
-}
-```
----
-## Sessions
-
-### POST /v1/sessions
-Start Session
-
-#### Request:
-```json
-{ "date": "2026-01-06", "programDayId": "uuid" }
-```
-
-### POST /v1/sessions/{id}/sets
-
-Log a set.
-
-#### Request:
-```json
-{
-  "exerciseId": "uuid",
-  "reps": 3,
-  "weight": 180.0,
-  "rpe": 8,
-  "note": "Moved well"
-}
-```
-Validation:
-
-- reps >= 1
-
-- weight >= 0
-- 
-- rpe optional, if present 1–10
+Returns upcoming planned workout days and status.
 
 ---
 
-## History
+## Workout Sessions
 
-### GET /v1/history
+### POST `/api/v1/workout-sessions`
 
-Returns past sessions (paginated).
+Planned.
+
+Creates a planned or blank workout session.
+
+### POST `/api/v1/workout-sessions/{id}/exercises`
+
+Planned.
+
+Adds an exercise to a workout.
+
+### POST `/api/v1/workout-sessions/{id}/sets`
+
+Planned.
+
+Adds a set to a workout exercise.
+
+### POST `/api/v1/workout-sessions/{id}/complete`
+
+Planned.
+
+Completes a workout session.
 
 ---
 
-## Insights
+## History and Progress
 
-### GET /v1/insights/weekly?weekStart=YYYY-MM-DD
+### GET `/api/v1/workout-sessions`
 
-#### Weekly summary derived from sessions:
+Planned.
 
-- session count
+Returns completed session history.
 
-- adherence
+### GET `/api/v1/exercises/{id}/history`
 
-- volume per exercise
+Planned.
 
-- top e1RM for S/B/D if present
+Returns history for a specific exercise.
+
+### GET `/api/v1/progress/summary`
+
+Planned.
+
+Returns basic progress summary.
 
 ---
 
-# User 
-### GET /v1/me
+## Future APIs
 
-#### Returns basic information about the authenticated user.
+Deferred until after MVP Core:
 
-Used by the client to:
-- verify authentication
-- bootstrap user preferences (units, e1RM formula)
-- confirm API connectivity
+- coach-athlete invites,
+- organisations,
+- questionnaire recommendations,
+- AI-assisted program customisation,
+- marketplace/payments.
 
-**Authentication:** Required (JWT)
+---
 
-**Response (200):**
-```json
-{
-  "userId": "uuid",
-  "units": "METRIC",
-  "e1rmFormula": "EPLEY"
-}
-```
+## Contract Strategy
 
-**Errors:**
-
-```json
-{
-401 Unauthorized - missing or invalid token
-}```
+OpenAPI should be generated from the Spring Boot API and used to keep frontend/backend contracts aligned.

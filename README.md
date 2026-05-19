@@ -1,81 +1,110 @@
 # Pillar Strength
 
-Pillar Strength is a training platform focused on **correctness, clarity, and long-term progression**.
+Pillar Strength is an individual-first training platform focused on **correctness, clarity, and long-term progression**.
 
-The goal is to allow athletes to:
-- follow a structured training program (template or custom),
-- log gym sessions quickly (RPE optional),
-- view accurate history and weekly insights,
+The MVP is a structured training tracker for lifters who want to:
+
+- follow a structured gym program,
+- create or edit their own program,
+- log planned and ad-hoc workouts quickly,
+- review history and useful training stats,
 - and later share training data with coaches or organisations.
 
 This repository is a **monorepo** containing:
+
 - a Spring Boot API (`apps/api`)
 - an Expo application for mobile + web (`apps/app`)
 - system and product documentation (`docs/`)
 
-The MVP focuses on **gym-based training only**, but the system is designed to expand to:
-- coaches and organisations
-- program blocks (meso/micro) and deloads
-- media uploads and comments
-- additional activity types beyond the gym
-- different training methodologies
+The MVP focuses on **individual gym-based program tracking**. Coach, organisation, marketplace, and AI-assisted coaching features are future scope and should not drive the first user experience.
 
 ---
 
 ## Tech Stack
 
 **Backend**
-- Java 21
+
+- Java 25
 - Spring Boot
 - Supabase Postgres
 - Supabase Auth (JWT)
-- Testcontainers (integration tests)
+- Flyway migrations
+- Testcontainers for integration tests
 
 **Frontend**
+
 - React Native (Expo)
 - Expo Router
 - Runs on iOS, Android, and Web
 
 **Engineering & DevOps**
+
 - Monorepo with vertical slices
 - CI with linting and tests
 - OpenAPI for API contracts
 - ADRs for architectural decisions
 - Structured logging and basic observability
-- Infrastructure as Code: Terraform (AWS) for automated resource provisioning.
-- Containerisation: Docker for full environment parity across local and cloud environments.
-- Image Registry: Private Amazon ECR for secure, high-speed image deployments.
-- Architecture Migration: Transitioned from a legacy Raspberry Pi/Ansible approach to a modern Cloud-Native stack to resolve hardware compatibility and security constraints.
+- Terraform/AWS infrastructure
+- Docker containerisation
+- Private Amazon ECR image registry
 
 ---
 
 ## Repository Structure
 
+```txt
 pillar-strength/
-apps/
-api/ # Spring Boot backend
-app/ # Expo app (mobile + web)
-docs/
-adr/ # Architecture Decision Records
-design/ # Wireframes and user flows
-.github/
-workflows/ # CI pipelines
+├── apps/
+│   ├── api/          # Spring Boot backend
+│   └── app/          # Expo app
+├── docs/
+│   ├── adr/          # Architecture Decision Records
+│   ├── design/       # Wireframes and user flows
+│   └── *.md          # Product, API, roadmap, and architecture docs
+└── .github/
+    └── workflows/    # CI/CD pipelines
+```
 
+---
+
+## Product Direction
+
+The core app loop is:
+
+```txt
+See what to do today
+→ Log planned or blank workout
+→ Review progress/history
+→ Edit or change program when needed
+```
+
+The long-term tabs are:
+
+```txt
+Home
+Log
+Progress
+Profile
+```
+
+Programs and exercises are important, but they are not permanent top-level tabs. They are internal screens used by the main app loop.
 
 ---
 
 ## Philosophy
 
 Pillar Strength is built with the following principles:
-- **Sessions are the source of truth** (what actually happened matters)
-- **Programs define intent**, not reality
-- **Set/rep schemes are declarative metadata** in MVP (no progression engine yet)
-- **Design for expansion without building it prematurely**
+
+- **Sessions are the source of truth**: what actually happened matters most.
+- **Programs define intent**: planned training can differ from performed training.
+- **Templates are blueprints**: active programs are user-owned copies.
+- **Set/rep schemes are declarative metadata in MVP**: no full progression engine yet.
+- **Design for coaching/org expansion without building it prematurely**.
 
 ---
 
 ## Status
 
-Early development — MVP under active construction.
+Early development — MVP Core under active construction.
 
-See `docs/mvp-scope.md` for what is explicitly in and out of scope.
+See `docs/mvp-scope.md` and `docs/roadmap.md` for the current scope and delivery order.

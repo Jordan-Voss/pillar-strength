@@ -1,99 +1,263 @@
 # Pillar Strength — MVP Scope
 
-## Goal
-A user can choose a training template or create their own program, follow a schedule, log gym sessions quickly (RPE optional), and view history + weekly insights.
-The system is designed to later support coaches/orgs/media and other activities, but MVP is gym-only.
+## MVP Goal
 
-## In scope (MVP)
-### Account & Settings
-- Supabase Auth (email/password)
-- User profile:
-    - display name (optional in UI; stored for future)
-- Settings (MVP):
-    - units: metric/imperial
-    - e1RM formula: Epley/Brzycki
-    - theme: follow system (manual override later)
+Build an individual-first training tracker that lets users:
 
-### Programs
-- Templates (4):
-    1) Powerlifting 3-day (S/B/D)
-    2) Powerlifting 4-day (Upper/Lower strength)
-    3) General gym 3-day full body (hypertrophy)
-    4) General gym 4-day upper/lower (hypertrophy)
-- Create Program Instance from template
-- Create-your-own program (basic builder)
-- Program day includes planned exercises with **scheme metadata**
-- Optional planned warmup guidance per program day:
-  - `warmup_plan` text (e.g. “10 min bike + hip mobility 5 min”)
+1. follow or create a gym program,
+2. see what to do today,
+3. log planned and ad-hoc workouts,
+4. review history and useful stats,
+5. edit their own program over time.
 
-### Schedule & History
-- Schedule view (next 14 days)
-    - planned workout days from program
-    - completed/missed status
-- History view
-    - sessions list
-    - session detail with sets
-
-### Session logging
-- Start a session from schedule or “today”
-- Log sets:
-  - weight, reps
-  - optional RPE
-  - optional note
-  - role: `WARMUP` or `WORKING` (default WORKING)
-- Log warmup activities:
-  - bike/row/run/stretching/mobility
-  - duration minutes (+ optional distance/intensity/notes)
-- Copy last session for same program day (prefill)
-- Add exercises during a session (planned or freestyle)
-
-### Insights (weekly)
-- Session count
-- Adherence (planned vs completed)
-- Volume per exercise and/or lift category
-- Top e1RM for squat/bench/deadlift if present
-- Insights are computed on demand in MVP
-- lifting volume excludes warmups (role=WARMUP) by default 
-- warmup activities shown in session detail; optional weekly “warmup minutes” later
-
-### Set/rep schemes (declarative metadata only)
-Supported scheme shapes (stored + displayed, not executed):
-- straight sets
-- top set + backoffs
-- top set @RPE + percentage backoffs
-    - backoff reps may differ from top set reps
-- top set % + percentage backoffs
-- fatigue single + backoffs
-- (future-ready) multiple backoff blocks stored but not required in UI
-
-### Engineering foundations
-- OpenAPI contract generated from API
-- Contract checks in CI (OpenAPI diff + Spectral lint)
-- Typed client generation for Expo (or schema validation) to keep UI in sync
-- Unit + integration + BDD (API-level) + small UI E2E smoke tests
-- Observability baseline (structured logs + metrics plan + tracing plan)
-- Health endpoint
-- Monorepo structure with path-filtered CI
+Coach, organisation, marketplace, and AI features are important future directions, but they are **not part of MVP Core**.
 
 ---
 
-## Out of scope (MVP)
-- Coach/org roles, billing, payments
-- Video upload/comments
-- Adaptive programming engine (auto load calculation, auto progression)
-- Meso/micro blocks, deload automation
-- Non-gym activities
-- Wearables/nutrition/sleep integrations
-- Multi-language support (i18n)
-- Social features
-- Automatic warmup prescription engines (e.g., calculate warmups from working weight/readiness)
-- Warmup exercise library/videos 
-- i18n/multi-language (design for it only)
+## MVP User
+
+The MVP is designed for **individual lifters** first.
+
+The app should work well for:
+
+- powerlifting/strength users,
+- general gym strength/hypertrophy users,
+- rugby or field-sport strength users,
+- users who want to follow templates,
+- users who want to create custom programs.
+
+Future users may include:
+
+- coaches,
+- athletes connected to coaches,
+- organisations with multiple coaches and athletes.
 
 ---
-## Definition of done
-- User can sign up → choose template or build custom → schedule shown
-- User can start session → log sets → finish → session appears in history
-- Weekly insights return correct numbers for seeded test dataset
-- Contract checks + tests pass in CI
-- Demo script works end-to-end
+
+## MVP Navigation
+
+The main app tabs are:
+
+```txt
+Home
+Log
+Progress
+Profile
+```
+
+### Home
+
+Purpose: today view and next action.
+
+Includes:
+
+- today's planned workout,
+- current program summary,
+- recent workout summary,
+- quick actions.
+
+### Log
+
+Purpose: record training data.
+
+Includes:
+
+- start planned workout,
+- start blank/ad-hoc workout,
+- resume active workout,
+- quick access to exercise selection.
+
+Future logs may include bodyweight, sleep, nutrition notes, recovery, and pain/injury notes.
+
+### Progress
+
+Purpose: review history and stats.
+
+Includes:
+
+- workout history,
+- exercise history,
+- basic e1RM display,
+- recent volume/adherence summaries.
+
+### Profile
+
+Purpose: account and preferences.
+
+Includes:
+
+- profile details,
+- username/display name,
+- units,
+- e1RM formula,
+- theme,
+- sign out.
+
+---
+
+## Internal Screens
+
+These are important product areas but should not be main tabs:
+
+```txt
+/exercises
+/exercises/[id]
+/programs
+/programs/[id]
+/program-templates
+/program-templates/[id]
+/workouts/[id]
+/history
+```
+
+---
+
+## MVP Core Features
+
+### 1. Auth and Profile
+
+In scope:
+
+- sign up,
+- login with email or username,
+- authenticated `/me`,
+- profile/preferences,
+- sign out.
+
+### 2. Exercise Library
+
+In scope:
+
+- seeded exercise catalogue,
+- exercise search,
+- category/filter chips,
+- exercise detail page,
+- exercise metadata:
+  - category,
+  - exercise family,
+  - movement pattern,
+  - equipment,
+  - bodyweight flag,
+  - unilateral flag,
+- muscle mapping:
+  - primary,
+  - secondary,
+  - supporting.
+
+Out of scope for MVP Core:
+
+- full muscle diagram implementation,
+- exercise videos,
+- custom user-created exercises,
+- substitutions/progressions engine.
+
+### 3. Program Templates
+
+In scope:
+
+- seeded templates across several styles:
+  - beginner strength,
+  - powerlifting base,
+  - upper/lower strength,
+  - rugby strength,
+- template summary list,
+- template detail page,
+- template days,
+- template day exercises,
+- declarative set/rep scheme metadata.
+
+Templates are reusable blueprints and should not be edited directly when a user starts a program.
+
+### 4. User Programs
+
+In scope:
+
+- start program from template,
+- create a user-owned program copy,
+- create custom program v1,
+- edit own active/draft program,
+- view current program.
+
+### 5. Scheduling
+
+In scope:
+
+- sequential scheduling,
+- fixed weekly scheduling,
+- next planned workout,
+- upcoming workout statuses.
+
+Sequential scheduling:
+
+```txt
+Complete Day 1
+→ next workout is Day 2
+```
+
+Fixed weekly scheduling:
+
+```txt
+Monday = Day 1
+Wednesday = Day 2
+Friday = Day 3
+```
+
+### 6. Workout Logging
+
+In scope:
+
+- start planned workout,
+- start blank/ad-hoc workout,
+- add exercises,
+- log sets:
+  - reps,
+  - weight,
+  - optional RPE,
+  - warmup vs working set,
+- complete workout,
+- save session history.
+
+### 7. History and Basic Stats
+
+In scope:
+
+- workout history,
+- session detail,
+- exercise history,
+- basic estimated 1RM,
+- basic volume/adherence summaries.
+
+---
+
+## Explicitly Out of MVP Core
+
+Deferred to future phases:
+
+- coach-athlete invite flow,
+- organisations,
+- coach dashboards,
+- sharing permissions,
+- payments,
+- template marketplace,
+- questionnaire-based program recommendation,
+- AI-assisted program customisation,
+- advanced analytics,
+- full body diagram/media library,
+- nutrition/sleep/recovery logging beyond placeholders.
+
+---
+
+## MVP Completion Criteria
+
+MVP Core is complete when an individual user can:
+
+1. create an account,
+2. browse exercises and view exercise details,
+3. choose or create a program,
+4. schedule the program sequentially or by fixed weekdays,
+5. see what to train today,
+6. log a planned workout,
+7. log a blank workout,
+8. review history,
+9. view basic progress stats,
+10. edit their own program.
